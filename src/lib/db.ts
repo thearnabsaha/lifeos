@@ -27,7 +27,50 @@ export async function ensureTables() {
     )
   `;
 
+  await sql`CREATE INDEX IF NOT EXISTS idx_time_entries_user_date ON time_entries(user_id, date)`;
+
   await sql`
-    CREATE INDEX IF NOT EXISTS idx_time_entries_user_date ON time_entries(user_id, date)
+    CREATE TABLE IF NOT EXISTS notes (
+      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      title TEXT DEFAULT '',
+      content TEXT DEFAULT '',
+      pinned BOOLEAN DEFAULT false,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
+    )
   `;
+
+  await sql`CREATE INDEX IF NOT EXISTS idx_notes_user ON notes(user_id, updated_at DESC)`;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS journal_entries (
+      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      date TEXT NOT NULL,
+      mood TEXT DEFAULT '',
+      content TEXT DEFAULT '',
+      ai_generated BOOLEAN DEFAULT false,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(user_id, date)
+    )
+  `;
+
+  await sql`CREATE INDEX IF NOT EXISTS idx_journal_user_date ON journal_entries(user_id, date DESC)`;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS reminders (
+      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      title TEXT NOT NULL,
+      due_date TEXT,
+      completed BOOLEAN DEFAULT false,
+      priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+
+  await sql`CREATE INDEX IF NOT EXISTS idx_reminders_user ON reminders(user_id, completed, due_date)`;
 }

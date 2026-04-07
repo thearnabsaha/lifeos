@@ -23,8 +23,8 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 bg-white/80 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/80 safe-area-bottom">
-      <div className="mx-auto flex max-w-lg items-center justify-around px-2 py-1">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 bg-white/90 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/90 safe-area-bottom">
+      <div className="mx-auto flex max-w-lg items-center justify-around px-1">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive =
             href === "/dashboard"
@@ -35,7 +35,7 @@ export function BottomNav() {
               key={href}
               href={href}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-3 py-2 text-[10px] font-medium transition-colors",
+                "flex flex-col items-center gap-0.5 px-2 pb-1 pt-2 text-[10px] font-medium transition-colors",
                 isActive
                   ? "text-blue-600 dark:text-blue-400"
                   : "text-zinc-400 dark:text-zinc-500"
