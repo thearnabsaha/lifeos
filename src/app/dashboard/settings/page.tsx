@@ -26,8 +26,8 @@ export default function SettingsPage() {
       <div className="space-y-4">
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
-              <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-light">
+              <User className="h-5 w-5 text-accent" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-zinc-900 dark:text-white">
@@ -52,7 +52,7 @@ export default function SettingsPage() {
                 className={cn(
                   "flex flex-1 flex-col items-center gap-1.5 rounded-xl border p-3 text-xs font-medium transition-all",
                   mode === value
-                    ? "border-blue-500 bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400"
+                    ? "border-accent bg-accent-light text-accent"
                     : "border-zinc-200 text-zinc-500 hover:border-zinc-300 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600"
                 )}
               >
@@ -99,7 +99,7 @@ export default function SettingsPage() {
           <div className="space-y-2 text-xs text-zinc-500 dark:text-zinc-400">
             <div className="flex justify-between">
               <span>Version</span>
-              <span className="font-mono">2.0.0</span>
+              <span className="font-mono">2.1.0</span>
             </div>
             <div className="flex justify-between">
               <span>Build</span>

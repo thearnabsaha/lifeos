@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Plus, Trash2, Check, Bell, ChevronDown, ChevronUp, Paperclip } from "lucide-react";
+import { Plus, Trash2, Check, Bell, ChevronUp, Paperclip } from "lucide-react";
 import { format, isPast, isToday } from "date-fns";
 
 const PRIORITIES: { value: Reminder["priority"]; color: string; label: string }[] = [
@@ -76,7 +76,7 @@ export default function RemindersPage() {
 
       {isLoading && reminders.length === 0 ? (
         <div className="flex justify-center py-12">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-300 border-t-blue-600" />
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-300 border-t-accent" />
         </div>
       ) : reminders.length === 0 ? (
         <div className="flex flex-col items-center pt-20 animate-fade-in">
@@ -133,8 +133,8 @@ function ReminderCard({ reminder, onToggle, onDelete }: { reminder: Reminder; on
           className={cn(
             "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all",
             reminder.completed
-              ? "border-emerald-500 bg-emerald-500 text-white"
-              : "border-zinc-300 dark:border-zinc-600 hover:border-blue-500"
+              ? "border-accent bg-accent text-white"
+              : "border-zinc-300 dark:border-zinc-600 hover:border-accent"
           )}
         >
           {reminder.completed && <Check className="h-3.5 w-3.5" />}
@@ -146,7 +146,7 @@ function ReminderCard({ reminder, onToggle, onDelete }: { reminder: Reminder; on
           </p>
           {reminder.due_date && (
             <p className={cn("mt-0.5 text-[10px] font-medium",
-              isOverdue ? "text-red-500" : isDueToday ? "text-blue-600 dark:text-blue-400" : "text-zinc-400"
+              isOverdue ? "text-red-500" : isDueToday ? "text-accent" : "text-zinc-400"
             )}>
               {isOverdue ? "Overdue \u2014 " : isDueToday ? "Today \u2014 " : ""}
               {format(new Date(reminder.due_date + "T00:00:00"), "MMM d, yyyy")}
@@ -159,7 +159,7 @@ function ReminderCard({ reminder, onToggle, onDelete }: { reminder: Reminder; on
         <button
           onClick={() => setShowAttachments(!showAttachments)}
           className={cn("flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
-            showAttachments ? "text-blue-600 bg-blue-50 dark:bg-blue-950/30" : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            showAttachments ? "text-accent bg-accent-light" : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
           )}
         >
           <Paperclip className="h-3.5 w-3.5" />

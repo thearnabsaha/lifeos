@@ -6,7 +6,7 @@ import {
   Clock,
   StickyNote,
   BookOpen,
-  Bell,
+  CheckSquare,
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -15,7 +15,7 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Home", icon: Clock },
   { href: "/dashboard/notes", label: "Notes", icon: StickyNote },
   { href: "/dashboard/journal", label: "Journal", icon: BookOpen },
-  { href: "/dashboard/reminders", label: "Reminders", icon: Bell },
+  { href: "/dashboard/todos", label: "Todos", icon: CheckSquare },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ] as const;
 
@@ -37,7 +37,7 @@ export function BottomNav() {
               className={cn(
                 "flex flex-col items-center gap-0.5 px-2 pb-1 pt-2 text-[10px] font-medium transition-colors",
                 isActive
-                  ? "text-blue-600 dark:text-blue-400"
+                  ? "text-accent"
                   : "text-zinc-400 dark:text-zinc-500"
               )}
             >

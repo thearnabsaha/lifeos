@@ -11,7 +11,7 @@ export default function DashboardLayout({
   return (
     <AuthGuard>
       <div className="flex min-h-[100dvh] flex-col bg-zinc-50 dark:bg-zinc-950">
-        <main className="flex-1 pb-24">{children}</main>
+        <main className="flex-1 pt-2 pb-24 safe-area-top">{children}</main>
         <BottomNav />
       </div>
     </AuthGuard>

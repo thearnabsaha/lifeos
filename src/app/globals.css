@@ -20,6 +20,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-accent-dark: var(--accent-dark);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -46,6 +48,9 @@ body {
 @media all and (display-mode: standalone) {
   .safe-area-bottom {
     padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 4px);
+  }
+  .safe-area-top {
+    padding-top: calc(env(safe-area-inset-top, 20px) + 4px);
   }
 }
 

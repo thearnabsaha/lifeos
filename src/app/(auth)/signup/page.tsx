@@ -41,7 +41,7 @@ export default function SignupPage() {
     <div className="flex min-h-screen flex-col items-center justify-center px-6 bg-zinc-50 dark:bg-zinc-950">
       <div className="w-full max-w-sm animate-fade-in">
         <div className="mb-8 flex flex-col items-center gap-2">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 shadow-lg shadow-blue-600/25">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent shadow-lg">
             <Clock className="h-7 w-7 text-white" />
           </div>
           <h1 className="mt-3 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
@@ -107,10 +107,7 @@ export default function SignupPage() {
 
         <p className="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
           Already have an account?{" "}
-          <Link
-            href="/login"
-            className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
-          >
+          <Link href="/login" className="font-medium text-accent hover:opacity-80">
             Sign in
           </Link>
         </p>

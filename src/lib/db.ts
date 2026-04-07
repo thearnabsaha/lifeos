@@ -90,4 +90,22 @@ export async function ensureTables() {
   `;
 
   await sql`CREATE INDEX IF NOT EXISTS idx_attachments_parent ON attachments(user_id, parent_type, parent_id)`;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS todos (
+      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      title TEXT NOT NULL,
+      completed BOOLEAN DEFAULT false,
+      due_date TEXT,
+      schedule TEXT DEFAULT 'today' CHECK (schedule IN ('today', 'tomorrow', 'upcoming', 'someday', 'recurring')),
+      recurrence TEXT,
+      priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
+      "order" INTEGER DEFAULT 0,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+
+  await sql`CREATE INDEX IF NOT EXISTS idx_todos_user ON todos(user_id, completed, schedule, due_date)`;
 }

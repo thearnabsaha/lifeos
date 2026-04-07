@@ -44,14 +44,14 @@ export function DatePicker({ selectedDate, onDateChange }: DatePickerProps) {
           className={cn(
             "text-lg font-bold tracking-tight",
             today
-              ? "text-blue-600 dark:text-blue-400"
+              ? "text-accent"
               : "text-zinc-900 dark:text-white"
           )}
         >
           {today ? "Today" : format(date, "EEE, MMM d")}
         </span>
         {!today && (
-          <span className="text-[10px] font-medium text-blue-600 dark:text-blue-400">
+          <span className="text-[10px] font-medium text-accent">
             Tap for today
           </span>
         )}

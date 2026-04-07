@@ -52,7 +52,7 @@ export function TimeSlotCard({
       className={cn(
         "group flex gap-3 rounded-2xl border p-3 transition-all duration-200 animate-fade-in",
         isCurrentHour
-          ? "border-blue-200 bg-blue-50/50 shadow-sm shadow-blue-100 dark:border-blue-900 dark:bg-blue-950/30 dark:shadow-blue-950/20"
+          ? "border-accent-light bg-accent-light/30 shadow-sm"
           : "border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900",
         isPast && !content && "opacity-50"
       )}
@@ -62,7 +62,7 @@ export function TimeSlotCard({
           className={cn(
             "text-xs font-semibold tabular-nums",
             isCurrentHour
-              ? "text-blue-600 dark:text-blue-400"
+              ? "text-accent"
               : "text-zinc-400 dark:text-zinc-500"
           )}
         >
@@ -72,7 +72,7 @@ export function TimeSlotCard({
           {formatHour(hour).split(" – ")[1]}
         </span>
         {isCurrentHour && (
-          <div className="mt-1 h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
+          <div className="mt-1 h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
         )}
       </div>
 

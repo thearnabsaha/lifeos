@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import {
-  Paperclip, Image, Mic, FileText, File, X, Upload,
+  Image, Mic, FileText, File, X,
   Play, Pause, Download, Plus,
 } from "lucide-react";
 
@@ -43,7 +43,7 @@ function AudioPlayer({ url, name }: { url: string; name: string }) {
   return (
     <div className="flex items-center gap-2">
       <audio ref={audioRef} src={url} onEnded={() => setPlaying(false)} />
-      <button onClick={toggle} className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+      <button onClick={toggle} className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-light text-accent">
         {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 ml-0.5" />}
       </button>
       <span className="text-xs text-zinc-500 truncate">{name}</span>
@@ -156,8 +156,8 @@ export function Attachments({ parentType, parentId, compact }: AttachmentsProps)
       </div>
 
       {uploading && (
-        <div className="flex items-center gap-2 text-xs text-blue-600">
-          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-blue-200 border-t-blue-600" />
+        <div className="flex items-center gap-2 text-xs text-accent">
+          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-zinc-200 border-t-accent" />
           Uploading...
         </div>
       )}
@@ -205,7 +205,7 @@ export function Attachments({ parentType, parentId, compact }: AttachmentsProps)
             <p className="text-xs font-medium text-zinc-700 dark:text-zinc-300 truncate">{a.file_name}</p>
             <p className="text-[10px] text-zinc-400">{formatSize(a.file_size)}</p>
           </div>
-          <a href={a.file_url} target="_blank" rel="noopener" className="text-blue-500 hover:text-blue-600">
+          <a href={a.file_url} target="_blank" rel="noopener" className="text-accent hover:opacity-80">
             <Download className="h-4 w-4" />
           </a>
           <button onClick={() => handleDelete(a.id)} className="text-zinc-400 hover:text-red-500">

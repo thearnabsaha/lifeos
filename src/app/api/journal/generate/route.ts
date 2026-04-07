@@ -46,15 +46,24 @@ export async function POST(req: NextRequest) {
           messages: [
             {
               role: "system",
-              content:
-                "You are a thoughtful journal writer. Given a person's hourly time log for the day, write a reflective, first-person journal entry (2-3 paragraphs). Be warm, introspective, and highlight patterns or accomplishments. Don't list hours mechanically — weave them into a narrative.",
+              content: `You are a practical daily log summarizer. Given a person's hourly time log, create a structured daily summary using bullet points.
+
+Format rules:
+- Use "## Summary" as the first heading
+- Group activities into logical categories (Work, Learning, Personal, Health, etc.)
+- Use bullet points (- ) for each item
+- Keep each bullet concise and factual (no flowery language)
+- Include time ranges where relevant (e.g. "9-11am: ...")
+- Add a "## Key Accomplishments" section at the end with 2-3 bullet points
+- Add a "## Tomorrow" section with 1-2 actionable follow-ups based on what was done
+- Be direct and mechanical, not poetic. Think of it as a standup update, not a diary.`,
             },
             {
               role: "user",
-              content: `Here is my time log for ${date}:\n\n${timeLog}\n\nWrite a journal entry for this day.`,
+              content: `Here is my time log for ${date}:\n\n${timeLog}\n\nCreate a structured bullet-point summary.`,
             },
           ],
-          temperature: 0.8,
+          temperature: 0.4,
           max_tokens: 1024,
         });
 

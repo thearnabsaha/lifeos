@@ -63,7 +63,7 @@ export default function DashboardPage() {
         </div>
         <div className="mt-1">
           {syncing ? (
-            <Cloud className="h-4 w-4 animate-pulse text-blue-500" />
+            <Cloud className="h-4 w-4 animate-pulse text-accent" />
           ) : navigator.onLine ? (
             <Cloud className="h-4 w-4 text-emerald-400" />
           ) : (
@@ -77,7 +77,7 @@ export default function DashboardPage() {
 
         <div className="mt-3 flex items-center justify-center gap-4 border-t border-zinc-100 pt-3 dark:border-zinc-800">
           <div className="text-center">
-            <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+            <span className="text-lg font-bold text-accent">
               {filledCount}
             </span>
             <span className="text-xs text-zinc-400 dark:text-zinc-500">

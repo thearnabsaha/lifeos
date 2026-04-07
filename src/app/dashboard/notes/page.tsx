@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNotesStore, Note } from "@/store/notesStore";
+import { BlockEditor, Block, blocksToText, textToBlocks } from "@/components/BlockEditor";
 import { Attachments } from "@/components/Attachments";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,12 +14,12 @@ function NoteEditor({ note, onBack }: { note: Note; onBack: () => void }) {
   const { updateNote, deleteNote, togglePin } = useNotesStore();
   const titleRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState(note.title);
-  const [content, setContent] = useState(note.content);
+  const [blocks, setBlocks] = useState<Block[]>(() => textToBlocks(note.content));
   const [showAttachments, setShowAttachments] = useState(false);
 
   useEffect(() => {
     setTitle(note.title);
-    setContent(note.content);
+    setBlocks(textToBlocks(note.content));
   }, [note.id]);
 
   useEffect(() => {
@@ -30,10 +31,10 @@ function NoteEditor({ note, onBack }: { note: Note; onBack: () => void }) {
     updateNote(note.id, { title: v });
   }
 
-  function handleContent(v: string) {
-    setContent(v);
-    updateNote(note.id, { content: v });
-  }
+  const handleBlocks = useCallback((newBlocks: Block[]) => {
+    setBlocks(newBlocks);
+    updateNote(note.id, { content: blocksToText(newBlocks) });
+  }, [note.id, updateNote]);
 
   return (
     <div className="animate-fade-in flex flex-col h-full">
@@ -45,7 +46,7 @@ function NoteEditor({ note, onBack }: { note: Note; onBack: () => void }) {
         <button
           onClick={() => setShowAttachments(!showAttachments)}
           className={cn("flex h-9 w-9 items-center justify-center rounded-xl transition-colors",
-            showAttachments ? "text-blue-600 bg-blue-50 dark:bg-blue-950/30" : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            showAttachments ? "text-accent bg-accent-light" : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
           )}
         >
           <Paperclip className="h-4 w-4" />
@@ -74,18 +75,12 @@ function NoteEditor({ note, onBack }: { note: Note; onBack: () => void }) {
           placeholder="Note title"
           className="w-full bg-transparent text-xl font-bold text-zinc-900 dark:text-white placeholder:text-zinc-300 dark:placeholder:text-zinc-600 outline-none mb-3"
         />
-        <textarea
-          value={content}
-          onChange={(e) => handleContent(e.target.value)}
-          placeholder="Start writing..."
-          className="w-full flex-1 resize-none overflow-hidden bg-transparent text-sm leading-relaxed text-zinc-700 dark:text-zinc-300 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 outline-none"
-          style={{ minHeight: "30vh" }}
-          onInput={(e) => {
-            const t = e.target as HTMLTextAreaElement;
-            t.style.height = "auto";
-            t.style.height = Math.max(t.scrollHeight, window.innerHeight * 0.3) + "px";
-          }}
-        />
+
+        <BlockEditor blocks={blocks} onChange={handleBlocks} />
+
+        <div className="mt-6 pt-1 text-[10px] text-zinc-400">
+          Type <span className="font-mono bg-zinc-100 dark:bg-zinc-800 px-1 py-0.5 rounded">/</span> for headings, bullets, to-dos
+        </div>
 
         {showAttachments && (
           <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800">
@@ -102,7 +97,10 @@ export default function NotesPage() {
   const { notes, isLoading, selectedId, setSelected, fetchNotes, createNote } = useNotesStore();
   const [search, setSearch] = useState("");
 
-  useEffect(() => { fetchNotes(); }, []);
+  useEffect(() => {
+    setSelected(null);
+    fetchNotes();
+  }, []);
 
   const selected = notes.find((n) => n.id === selectedId);
 
@@ -133,7 +131,7 @@ export default function NotesPage() {
 
       {isLoading && notes.length === 0 ? (
         <div className="flex justify-center py-12">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-300 border-t-blue-600" />
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-300 border-t-accent" />
         </div>
       ) : notes.length === 0 ? (
         <div className="flex flex-col items-center justify-center pt-20 animate-fade-in">
@@ -162,7 +160,11 @@ export default function NotesPage() {
 }
 
 function NoteCard({ note, onTap }: { note: Note; onTap: () => void }) {
-  const preview = note.content.split("\n")[0]?.slice(0, 80) || "No content";
+  const lines = note.content.split("\n").filter(Boolean);
+  const preview = lines[0]?.replace(/^#+\s*/, "").replace(/^-\s*(\[.\]\s*)?/, "").slice(0, 80) || "No content";
+  const blockCount = lines.filter((l) => l.startsWith("- [ ] ") || l.startsWith("- [x] ")).length;
+  const doneCount = lines.filter((l) => l.startsWith("- [x] ")).length;
+
   return (
     <button
       onClick={onTap}
@@ -174,9 +176,16 @@ function NoteCard({ note, onTap }: { note: Note; onTap: () => void }) {
             {note.title || "Untitled"}
           </p>
           <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400 truncate">{preview}</p>
-          <p className="mt-1 text-[10px] text-zinc-400">
-            {format(new Date(note.updated_at), "MMM d, h:mm a")}
-          </p>
+          <div className="mt-1 flex items-center gap-2">
+            <p className="text-[10px] text-zinc-400">
+              {format(new Date(note.updated_at), "MMM d, h:mm a")}
+            </p>
+            {blockCount > 0 && (
+              <span className="text-[10px] font-medium text-accent">
+                {doneCount}/{blockCount} done
+              </span>
+            )}
+          </div>
         </div>
         {note.pinned && <Pin className="h-3.5 w-3.5 text-amber-500 shrink-0 mt-0.5" />}
       </div>

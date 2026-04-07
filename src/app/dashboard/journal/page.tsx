@@ -83,10 +83,10 @@ export default function JournalPage() {
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button onClick={goToday} className="flex flex-col items-center">
-            <span className={cn("text-lg font-bold", todayCheck ? "text-blue-600 dark:text-blue-400" : "text-zinc-900 dark:text-white")}>
+            <span className={cn("text-lg font-bold", todayCheck ? "text-accent" : "text-zinc-900 dark:text-white")}>
               {todayCheck ? "Today" : format(date, "EEE, MMM d")}
             </span>
-            {!todayCheck && <span className="text-[10px] text-blue-600 dark:text-blue-400">Tap for today</span>}
+            {!todayCheck && <span className="text-[10px] text-accent">Tap for today</span>}
           </button>
           <button onClick={goForward} className="flex h-9 w-9 items-center justify-center rounded-xl text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800">
             <ChevronRight className="h-5 w-5" />
@@ -104,7 +104,7 @@ export default function JournalPage() {
               className={cn(
                 "flex flex-1 flex-col items-center gap-1 rounded-xl border p-2 transition-all text-xs",
                 mood === m.value
-                  ? "border-blue-500 bg-blue-50 dark:bg-blue-950/30"
+                  ? "border-accent bg-accent-light"
                   : "border-zinc-100 dark:border-zinc-800 hover:border-zinc-200"
               )}
             >
@@ -122,14 +122,14 @@ export default function JournalPage() {
             <button
               onClick={() => setShowAttachments(!showAttachments)}
               className={cn("flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
-                showAttachments ? "text-blue-600 bg-blue-50 dark:bg-blue-950/30" : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                showAttachments ? "text-accent bg-accent-light" : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
               )}
             >
               <Paperclip className="h-4 w-4" />
             </button>
             <Button size="sm" variant="secondary" onClick={handleGenerate} disabled={isGenerating}>
               {isGenerating ? (
-                <><div className="mr-1.5 h-3 w-3 animate-spin rounded-full border-2 border-zinc-300 border-t-blue-600" /> Generating...</>
+                <><div className="mr-1.5 h-3 w-3 animate-spin rounded-full border-2 border-zinc-300 border-t-accent" /> Generating...</>
               ) : (
                 <><Sparkles className="mr-1 h-3.5 w-3.5" /> AI Generate</>
               )}
@@ -144,11 +144,11 @@ export default function JournalPage() {
           onChange={(e) => handleContentChange(e.target.value)}
           placeholder="Write about your day..."
           className="w-full resize-none overflow-hidden bg-transparent text-sm leading-relaxed text-zinc-700 dark:text-zinc-300 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 outline-none"
-          style={{ minHeight: "150px" }}
+          style={{ minHeight: "50vh" }}
           onInput={(e) => {
             const t = e.target as HTMLTextAreaElement;
             t.style.height = "auto";
-            t.style.height = Math.max(t.scrollHeight, 150) + "px";
+            t.style.height = Math.max(t.scrollHeight, window.innerHeight * 0.5) + "px";
           }}
         />
 
