@@ -7,6 +7,7 @@ import { TimeSlotCard } from "@/components/TimeSlotCard";
 import { DatePicker } from "@/components/DatePicker";
 import { Spinner } from "@/components/ui/spinner";
 import { getCurrentHour } from "@/lib/utils";
+import { Cloud, CloudOff } from "lucide-react";
 
 export default function DashboardPage() {
   const user = useAuthStore((s) => s.user);
@@ -14,7 +15,7 @@ export default function DashboardPage() {
     selectedDate,
     entries,
     isLoading,
-    savingHours,
+    syncing,
     setDate,
     fetchEntries,
     updateEntry,
@@ -51,13 +52,24 @@ export default function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-lg px-4 pt-4">
-      <div className="mb-4">
-        <h2 className="text-sm font-medium text-zinc-400 dark:text-zinc-500">
-          {user?.name ? `Hey, ${user.name}` : "Good day"}
-        </h2>
-        <h1 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
-          Time Arena
-        </h1>
+      <div className="mb-4 flex items-start justify-between">
+        <div>
+          <h2 className="text-sm font-medium text-zinc-400 dark:text-zinc-500">
+            {user?.name ? `Hey, ${user.name}` : "Good day"}
+          </h2>
+          <h1 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+            Time Arena
+          </h1>
+        </div>
+        <div className="mt-1">
+          {syncing ? (
+            <Cloud className="h-4 w-4 animate-pulse text-blue-500" />
+          ) : navigator.onLine ? (
+            <Cloud className="h-4 w-4 text-emerald-400" />
+          ) : (
+            <CloudOff className="h-4 w-4 text-zinc-400" />
+          )}
+        </div>
       </div>
 
       <div className="mb-4 rounded-2xl border border-zinc-100 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
@@ -75,7 +87,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {isLoading ? (
+      {isLoading && entries.every((e) => !e.content) ? (
         <div className="flex justify-center py-12">
           <Spinner className="h-6 w-6" />
         </div>
@@ -89,7 +101,6 @@ export default function DashboardPage() {
               <TimeSlotCard
                 hour={slot.hour}
                 content={slot.content}
-                isSaving={savingHours.has(slot.hour)}
                 onUpdate={handleUpdate(slot.hour)}
               />
             </div>

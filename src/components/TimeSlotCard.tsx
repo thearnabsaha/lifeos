@@ -2,41 +2,34 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { cn, formatHour, getCurrentHour } from "@/lib/utils";
-import { Check, Loader2 } from "lucide-react";
 
 interface TimeSlotCardProps {
   hour: number;
   content: string;
-  isSaving: boolean;
   onUpdate: (content: string) => void;
 }
 
 export function TimeSlotCard({
   hour,
   content,
-  isSaving,
   onUpdate,
 }: TimeSlotCardProps) {
   const [value, setValue] = useState(content);
-  const [isDirty, setIsDirty] = useState(false);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentHour = getCurrentHour();
   const isCurrentHour = hour === currentHour;
   const isPast = hour < currentHour;
 
   useEffect(() => {
-    if (!isDirty) {
-      setValue(content);
-    }
-  }, [content, isDirty]);
+    setValue(content);
+  }, [content]);
 
   const debouncedSave = useCallback(
     (text: string) => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
         onUpdate(text);
-        setIsDirty(false);
-      }, 800);
+      }, 300);
     },
     [onUpdate]
   );
@@ -44,7 +37,6 @@ export function TimeSlotCard({
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const text = e.target.value;
     setValue(text);
-    setIsDirty(true);
     debouncedSave(text);
   }
 
@@ -97,17 +89,6 @@ export function TimeSlotCard({
             target.style.height = target.scrollHeight + "px";
           }}
         />
-
-        <div className="absolute right-1 top-1.5">
-          {isSaving ? (
-            <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
-          ) : (
-            value &&
-            !isDirty && (
-              <Check className="h-3 w-3 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-            )
-          )}
-        </div>
       </div>
     </div>
   );

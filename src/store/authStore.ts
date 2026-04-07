@@ -1,5 +1,10 @@
 import { create } from "zustand";
 import { api } from "@/lib/api";
+import {
+  getCachedUser,
+  setCachedUser,
+  clearCachedUser,
+} from "@/lib/localStore";
 
 interface User {
   id: string;
@@ -19,18 +24,23 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
+  user: typeof window !== "undefined" ? getCachedUser() : null,
   token:
     typeof window !== "undefined" ? localStorage.getItem("token") : null,
-  isLoading: true,
+  isLoading:
+    typeof window !== "undefined"
+      ? !(localStorage.getItem("token") && getCachedUser())
+      : true,
 
   setAuth: (user, token) => {
     localStorage.setItem("token", token);
+    setCachedUser(user);
     set({ user, token, isLoading: false });
   },
 
   logout: () => {
     localStorage.removeItem("token");
+    clearCachedUser();
     set({ user: null, token: null, isLoading: false });
     window.location.href = "/login";
   },
@@ -38,14 +48,25 @@ export const useAuthStore = create<AuthState>((set) => ({
   checkAuth: async () => {
     const token = localStorage.getItem("token");
     if (!token) {
+      clearCachedUser();
       set({ isLoading: false });
       return;
     }
+
+    // If we have a cached user, show them instantly
+    const cached = getCachedUser();
+    if (cached) {
+      set({ user: cached, token, isLoading: false });
+    }
+
+    // Verify with server in background
     try {
       const data = await api.get<{ user: User }>("/auth/me");
+      setCachedUser(data.user);
       set({ user: data.user, token, isLoading: false });
     } catch {
       localStorage.removeItem("token");
+      clearCachedUser();
       set({ user: null, token: null, isLoading: false });
     }
   },
@@ -56,6 +77,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       password,
     });
     localStorage.setItem("token", data.token);
+    setCachedUser(data.user);
     set({ user: data.user, token: data.token, isLoading: false });
   },
 
@@ -65,6 +87,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       { email, password, name }
     );
     localStorage.setItem("token", data.token);
+    setCachedUser(data.user);
     set({ user: data.user, token: data.token, isLoading: false });
   },
 }));

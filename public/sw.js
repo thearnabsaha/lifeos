@@ -1,5 +1,5 @@
-const CACHE_NAME = "lifeos-v2";
-const STATIC_ASSETS = ["/icons/icon-192.png", "/icons/icon-512.png"];
+const CACHE_NAME = "lifeos-v3";
+const STATIC_ASSETS = ["/icons/icon-192.svg", "/icons/icon-512.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -24,19 +24,24 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const { request } = event;
 
-  if (request.method !== "GET" || request.url.includes("/api/")) {
-    return;
-  }
+  if (request.method !== "GET") return;
+  if (request.url.includes("/api/")) return;
 
-  // Navigation requests (HTML pages) — always go to network first
+  // Navigation — network first, fall back to cache
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(() => caches.match("/"))
+      fetch(request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          return response;
+        })
+        .catch(() => caches.match(request).then((r) => r || caches.match("/")))
     );
     return;
   }
 
-  // Static assets — cache-first
+  // Static assets — cache first
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
