@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LifeOS
+
+A minimal, mobile-first productivity app combining Time Tracking, Notes, Journal, and Reminders. Built with Next.js and deployed on Vercel.
+
+## Tech Stack
+
+- **Frontend**: Next.js 16, React 19, Tailwind CSS 4, Zustand
+- **Backend**: Next.js API Routes (serverless)
+- **Database**: Neon PostgreSQL (serverless driver)
+- **AI**: Groq LLM (optional)
+- **Deployment**: Vercel
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20+
+- A [Neon](https://neon.tech) PostgreSQL database
+
+### Setup
+
+1. Clone the repo and install dependencies:
+
+```bash
+git clone <your-repo-url>
+cd lifeos
+npm install
+```
+
+2. Copy `.env.example` to `.env` and fill in your values:
+
+```bash
+cp .env.example .env
+```
+
+3. Initialize the database tables (one-time):
+
+```bash
+curl -X POST http://localhost:3000/api/setup \
+  -H "x-setup-secret: YOUR_JWT_SECRET"
+```
+
+4. Start the dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy to Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Push to GitHub
+2. Import the repo in [Vercel](https://vercel.com)
+3. Add environment variables in Vercel project settings:
+   - `DATABASE_URL` — your Neon connection string
+   - `JWT_SECRET` — a secure random string
+   - `GROQ_API_KEY` — (optional) for AI features
+4. Deploy
+5. Initialize DB tables by calling the setup endpoint once:
 
-## Learn More
+```bash
+curl -X POST https://your-app.vercel.app/api/setup \
+  -H "x-setup-secret: YOUR_JWT_SECRET"
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Time Arena** — Track what you do every hour of the day
+- **Notes** — Apple Notes-style editor (coming soon)
+- **Journal** — Daily reflections with prompts (coming soon)
+- **Reminders** — Smart reminders with due dates (coming soon)
+- **PWA** — Install on your phone's home screen
+- **Dark Mode** — Light, dark, and system themes
+- **AI Assistant** — Productivity insights powered by Groq (optional)
