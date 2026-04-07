@@ -2,18 +2,19 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useJournalStore, JournalEntry } from "@/store/journalStore";
+import { Attachments } from "@/components/Attachments";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight, Sparkles, Bot, BookOpen } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, Bot, BookOpen, Paperclip } from "lucide-react";
 import { format, addDays, subDays, isToday } from "date-fns";
 
 const MOODS = [
-  { value: "great", emoji: "😄", label: "Great" },
-  { value: "good", emoji: "🙂", label: "Good" },
-  { value: "okay", emoji: "😐", label: "Okay" },
-  { value: "bad", emoji: "😔", label: "Bad" },
-  { value: "terrible", emoji: "😢", label: "Terrible" },
+  { value: "great", emoji: "\u{1F604}", label: "Great" },
+  { value: "good", emoji: "\u{1F642}", label: "Good" },
+  { value: "okay", emoji: "\u{1F610}", label: "Okay" },
+  { value: "bad", emoji: "\u{1F614}", label: "Bad" },
+  { value: "terrible", emoji: "\u{1F622}", label: "Terrible" },
 ];
 
 export default function JournalPage() {
@@ -25,6 +26,7 @@ export default function JournalPage() {
   const [content, setContent] = useState("");
   const [mood, setMood] = useState("");
   const [error, setError] = useState("");
+  const [showAttachments, setShowAttachments] = useState(false);
 
   useEffect(() => { fetchEntries(); fetchEntry(selectedDate); }, []);
 
@@ -36,6 +38,7 @@ export default function JournalPage() {
       setContent("");
       setMood("");
     }
+    setShowAttachments(false);
   }, [currentEntry?.id, currentEntry?.date, selectedDate]);
 
   const date = new Date(selectedDate + "T00:00:00");
@@ -67,6 +70,8 @@ export default function JournalPage() {
       setError(err instanceof Error ? err.message : "Failed to generate");
     }
   }
+
+  const entryId = currentEntry?.id || null;
 
   return (
     <div className="mx-auto max-w-lg px-4 pt-4">
@@ -113,13 +118,23 @@ export default function JournalPage() {
       <Card className="p-4 mb-4">
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Journal Entry</p>
-          <Button size="sm" variant="secondary" onClick={handleGenerate} disabled={isGenerating}>
-            {isGenerating ? (
-              <><div className="mr-1.5 h-3 w-3 animate-spin rounded-full border-2 border-zinc-300 border-t-blue-600" /> Generating...</>
-            ) : (
-              <><Sparkles className="mr-1 h-3.5 w-3.5" /> AI Generate</>
-            )}
-          </Button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setShowAttachments(!showAttachments)}
+              className={cn("flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
+                showAttachments ? "text-blue-600 bg-blue-50 dark:bg-blue-950/30" : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              )}
+            >
+              <Paperclip className="h-4 w-4" />
+            </button>
+            <Button size="sm" variant="secondary" onClick={handleGenerate} disabled={isGenerating}>
+              {isGenerating ? (
+                <><div className="mr-1.5 h-3 w-3 animate-spin rounded-full border-2 border-zinc-300 border-t-blue-600" /> Generating...</>
+              ) : (
+                <><Sparkles className="mr-1 h-3.5 w-3.5" /> AI Generate</>
+              )}
+            </Button>
+          </div>
         </div>
 
         {error && <p className="mb-2 text-xs text-red-500 rounded-lg bg-red-50 dark:bg-red-950/30 px-3 py-2">{error}</p>}
@@ -128,7 +143,7 @@ export default function JournalPage() {
           value={content}
           onChange={(e) => handleContentChange(e.target.value)}
           placeholder="Write about your day..."
-          className="w-full resize-none bg-transparent text-sm leading-relaxed text-zinc-700 dark:text-zinc-300 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 outline-none"
+          className="w-full resize-none overflow-hidden bg-transparent text-sm leading-relaxed text-zinc-700 dark:text-zinc-300 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 outline-none"
           style={{ minHeight: "150px" }}
           onInput={(e) => {
             const t = e.target as HTMLTextAreaElement;
@@ -136,6 +151,13 @@ export default function JournalPage() {
             t.style.height = Math.max(t.scrollHeight, 150) + "px";
           }}
         />
+
+        {showAttachments && (
+          <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800">
+            <p className="mb-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider">Attachments</p>
+            <Attachments parentType="journal" parentId={entryId} />
+          </div>
+        )}
       </Card>
 
       {entries.length > 0 && (

@@ -2,10 +2,11 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useNotesStore, Note } from "@/store/notesStore";
+import { Attachments } from "@/components/Attachments";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Plus, ArrowLeft, Pin, Trash2, Search, StickyNote } from "lucide-react";
+import { Plus, ArrowLeft, Pin, Trash2, Search, StickyNote, Paperclip } from "lucide-react";
 import { format } from "date-fns";
 
 function NoteEditor({ note, onBack }: { note: Note; onBack: () => void }) {
@@ -13,6 +14,7 @@ function NoteEditor({ note, onBack }: { note: Note; onBack: () => void }) {
   const titleRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState(note.title);
   const [content, setContent] = useState(note.content);
+  const [showAttachments, setShowAttachments] = useState(false);
 
   useEffect(() => {
     setTitle(note.title);
@@ -41,6 +43,14 @@ function NoteEditor({ note, onBack }: { note: Note; onBack: () => void }) {
         </button>
         <div className="flex-1" />
         <button
+          onClick={() => setShowAttachments(!showAttachments)}
+          className={cn("flex h-9 w-9 items-center justify-center rounded-xl transition-colors",
+            showAttachments ? "text-blue-600 bg-blue-50 dark:bg-blue-950/30" : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          )}
+        >
+          <Paperclip className="h-4 w-4" />
+        </button>
+        <button
           onClick={() => togglePin(note.id)}
           className={cn("flex h-9 w-9 items-center justify-center rounded-xl transition-colors",
             note.pinned ? "text-amber-500 bg-amber-50 dark:bg-amber-950/30" : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
@@ -56,7 +66,7 @@ function NoteEditor({ note, onBack }: { note: Note; onBack: () => void }) {
         </button>
       </div>
 
-      <div className="flex-1 px-4 pb-4">
+      <div className="flex-1 px-4 pb-4 overflow-y-auto">
         <input
           ref={titleRef}
           value={title}
@@ -68,14 +78,21 @@ function NoteEditor({ note, onBack }: { note: Note; onBack: () => void }) {
           value={content}
           onChange={(e) => handleContent(e.target.value)}
           placeholder="Start writing..."
-          className="w-full flex-1 resize-none bg-transparent text-sm leading-relaxed text-zinc-700 dark:text-zinc-300 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 outline-none"
-          style={{ minHeight: "60vh" }}
+          className="w-full flex-1 resize-none overflow-hidden bg-transparent text-sm leading-relaxed text-zinc-700 dark:text-zinc-300 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 outline-none"
+          style={{ minHeight: "30vh" }}
           onInput={(e) => {
             const t = e.target as HTMLTextAreaElement;
             t.style.height = "auto";
-            t.style.height = Math.max(t.scrollHeight, window.innerHeight * 0.6) + "px";
+            t.style.height = Math.max(t.scrollHeight, window.innerHeight * 0.3) + "px";
           }}
         />
+
+        {showAttachments && (
+          <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+            <p className="mb-3 text-xs font-semibold text-zinc-400 uppercase tracking-wider">Attachments</p>
+            <Attachments parentType="note" parentId={note.id} />
+          </div>
+        )}
       </div>
     </div>
   );

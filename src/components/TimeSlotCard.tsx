@@ -15,6 +15,7 @@ export function TimeSlotCard({
   onUpdate,
 }: TimeSlotCardProps) {
   const [value, setValue] = useState(content);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentHour = getCurrentHour();
   const isCurrentHour = hour === currentHour;
@@ -22,6 +23,10 @@ export function TimeSlotCard({
 
   useEffect(() => {
     setValue(content);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+    }
   }, [content]);
 
   const debouncedSave = useCallback(
@@ -38,6 +43,8 @@ export function TimeSlotCard({
     const text = e.target.value;
     setValue(text);
     debouncedSave(text);
+    e.target.style.height = "auto";
+    e.target.style.height = e.target.scrollHeight + "px";
   }
 
   return (
@@ -71,6 +78,7 @@ export function TimeSlotCard({
 
       <div className="relative flex-1">
         <textarea
+          ref={textareaRef}
           value={value}
           onChange={handleChange}
           placeholder={
@@ -78,16 +86,11 @@ export function TimeSlotCard({
           }
           rows={1}
           className={cn(
-            "w-full resize-none rounded-lg bg-transparent px-2 py-1.5 text-sm leading-relaxed outline-none transition-colors",
+            "w-full resize-none overflow-hidden rounded-lg bg-transparent px-2 py-1.5 text-sm leading-relaxed outline-none transition-colors",
             "placeholder:text-zinc-300 dark:placeholder:text-zinc-600",
             "focus:bg-zinc-50 dark:focus:bg-zinc-800/50"
           )}
           style={{ minHeight: "2.25rem" }}
-          onInput={(e) => {
-            const target = e.target as HTMLTextAreaElement;
-            target.style.height = "auto";
-            target.style.height = target.scrollHeight + "px";
-          }}
         />
       </div>
     </div>

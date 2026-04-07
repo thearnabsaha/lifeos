@@ -73,4 +73,21 @@ export async function ensureTables() {
   `;
 
   await sql`CREATE INDEX IF NOT EXISTS idx_reminders_user ON reminders(user_id, completed, due_date)`;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS attachments (
+      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      parent_type TEXT NOT NULL,
+      parent_id TEXT NOT NULL,
+      file_name TEXT NOT NULL,
+      file_url TEXT NOT NULL,
+      file_type TEXT NOT NULL DEFAULT 'other',
+      file_size INTEGER DEFAULT 0,
+      mime_type TEXT DEFAULT '',
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+
+  await sql`CREATE INDEX IF NOT EXISTS idx_attachments_parent ON attachments(user_id, parent_type, parent_id)`;
 }

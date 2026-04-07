@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRemindersStore, Reminder } from "@/store/remindersStore";
+import { Attachments } from "@/components/Attachments";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Plus, Trash2, Check, Bell, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Trash2, Check, Bell, ChevronDown, ChevronUp, Paperclip } from "lucide-react";
 import { format, isPast, isToday } from "date-fns";
 
 const PRIORITIES: { value: Reminder["priority"]; color: string; label: string }[] = [
@@ -114,48 +115,68 @@ export default function RemindersPage() {
 }
 
 function ReminderCard({ reminder, onToggle, onDelete }: { reminder: Reminder; onToggle: () => void; onDelete: () => void }) {
+  const [showAttachments, setShowAttachments] = useState(false);
   const priorityColor = PRIORITIES.find((p) => p.value === reminder.priority)?.color || "bg-amber-500";
   const isOverdue = reminder.due_date && !reminder.completed && isPast(new Date(reminder.due_date + "T23:59:59"));
   const isDueToday = reminder.due_date && isToday(new Date(reminder.due_date + "T00:00:00"));
 
   return (
     <div className={cn(
-      "flex items-center gap-3 rounded-2xl border p-3 transition-all animate-fade-in",
+      "rounded-2xl border transition-all animate-fade-in",
       reminder.completed
         ? "border-zinc-100 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/50 opacity-60"
         : "border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900"
     )}>
-      <button
-        onClick={onToggle}
-        className={cn(
-          "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all",
-          reminder.completed
-            ? "border-emerald-500 bg-emerald-500 text-white"
-            : "border-zinc-300 dark:border-zinc-600 hover:border-blue-500"
-        )}
-      >
-        {reminder.completed && <Check className="h-3.5 w-3.5" />}
-      </button>
+      <div className="flex items-center gap-3 p-3">
+        <button
+          onClick={onToggle}
+          className={cn(
+            "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all",
+            reminder.completed
+              ? "border-emerald-500 bg-emerald-500 text-white"
+              : "border-zinc-300 dark:border-zinc-600 hover:border-blue-500"
+          )}
+        >
+          {reminder.completed && <Check className="h-3.5 w-3.5" />}
+        </button>
 
-      <div className="flex-1 min-w-0">
-        <p className={cn("text-sm font-medium", reminder.completed && "line-through text-zinc-400 dark:text-zinc-500")}>
-          {reminder.title}
-        </p>
-        {reminder.due_date && (
-          <p className={cn("mt-0.5 text-[10px] font-medium",
-            isOverdue ? "text-red-500" : isDueToday ? "text-blue-600 dark:text-blue-400" : "text-zinc-400"
-          )}>
-            {isOverdue ? "Overdue — " : isDueToday ? "Today — " : ""}
-            {format(new Date(reminder.due_date + "T00:00:00"), "MMM d, yyyy")}
+        <div className="flex-1 min-w-0">
+          <p className={cn("text-sm font-medium", reminder.completed && "line-through text-zinc-400 dark:text-zinc-500")}>
+            {reminder.title}
           </p>
-        )}
+          {reminder.due_date && (
+            <p className={cn("mt-0.5 text-[10px] font-medium",
+              isOverdue ? "text-red-500" : isDueToday ? "text-blue-600 dark:text-blue-400" : "text-zinc-400"
+            )}>
+              {isOverdue ? "Overdue \u2014 " : isDueToday ? "Today \u2014 " : ""}
+              {format(new Date(reminder.due_date + "T00:00:00"), "MMM d, yyyy")}
+            </p>
+          )}
+        </div>
+
+        <div className={cn("h-2.5 w-2.5 rounded-full shrink-0", priorityColor)} />
+
+        <button
+          onClick={() => setShowAttachments(!showAttachments)}
+          className={cn("flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
+            showAttachments ? "text-blue-600 bg-blue-50 dark:bg-blue-950/30" : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          )}
+        >
+          <Paperclip className="h-3.5 w-3.5" />
+        </button>
+
+        <button onClick={onDelete} className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
       </div>
 
-      <div className={cn("h-2.5 w-2.5 rounded-full shrink-0", priorityColor)} />
-
-      <button onClick={onDelete} className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
-        <Trash2 className="h-3.5 w-3.5" />
-      </button>
+      {showAttachments && (
+        <div className="px-3 pb-3 pt-0 border-t border-zinc-100 dark:border-zinc-800 mt-0">
+          <div className="pt-3">
+            <Attachments parentType="reminder" parentId={reminder.id} compact />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
