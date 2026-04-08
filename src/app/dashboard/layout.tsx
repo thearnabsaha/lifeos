@@ -10,8 +10,15 @@ export default function DashboardLayout({
 }) {
   return (
     <AuthGuard>
-      <div className="flex min-h-[100dvh] flex-col bg-zinc-50 dark:bg-zinc-950">
-        <main className="flex-1 pt-2 pb-24 safe-area-top">{children}</main>
+      <div className="fixed inset-0 flex flex-col bg-zinc-50 dark:bg-zinc-950">
+        <main
+          className="flex-1 overflow-y-auto overscroll-contain"
+          style={{ paddingBottom: "calc(var(--nav-height) + var(--safe-bottom) + 8px)" }}
+        >
+          <div className="pt-2" style={{ paddingTop: "max(env(safe-area-inset-top, 0px), 8px)" }}>
+            {children}
+          </div>
+        </main>
         <BottomNav />
       </div>
     </AuthGuard>

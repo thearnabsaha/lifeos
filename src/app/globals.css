@@ -6,6 +6,8 @@
   --accent: #2563eb;
   --accent-light: #dbeafe;
   --accent-dark: #1e40af;
+  --nav-height: 56px;
+  --safe-bottom: 0px;
 }
 
 .dark {
@@ -14,6 +16,12 @@
   --accent: #3b82f6;
   --accent-light: #1e3a5f;
   --accent-dark: #60a5fa;
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  :root {
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
 @theme inline {
@@ -26,32 +34,21 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
+  height: 100%;
+  overflow: hidden;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
-}
-
-.safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .safe-area-bottom {
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4px);
-  }
-}
-
-@media all and (display-mode: standalone) {
-  .safe-area-bottom {
-    padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 4px);
-  }
-  .safe-area-top {
-    padding-top: calc(env(safe-area-inset-top, 20px) + 4px);
-  }
+  overscroll-behavior: none;
 }
 
 input,

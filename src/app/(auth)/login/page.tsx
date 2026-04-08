@@ -32,7 +32,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-6 bg-zinc-50 dark:bg-zinc-950">
+    <div className="fixed inset-0 flex flex-col items-center justify-center overflow-y-auto px-6 bg-zinc-50 dark:bg-zinc-950">
       <div className="w-full max-w-sm animate-fade-in">
         <div className="mb-8 flex flex-col items-center gap-2">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent shadow-lg">
