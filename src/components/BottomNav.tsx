@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Clock,
-  StickyNote,
   BookOpen,
   CheckSquare,
   Settings,
@@ -13,7 +12,6 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Home", icon: Clock },
-  { href: "/dashboard/notes", label: "Notes", icon: StickyNote },
   { href: "/dashboard/journal", label: "Journal", icon: BookOpen },
   { href: "/dashboard/todos", label: "Todos", icon: CheckSquare },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
