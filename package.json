@@ -6,11 +6,11 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:setup": "curl http://localhost:3000/api/setup"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
-    "@vercel/blob": "^2.3.3",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

@@ -6,7 +6,7 @@ import { Attachments } from "@/components/Attachments";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight, Sparkles, Bot, BookOpen, Paperclip } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, Bot, BookOpen, Paperclip, Trash2 } from "lucide-react";
 import { format, addDays, subDays, isToday } from "date-fns";
 
 const MOODS = [
@@ -20,13 +20,14 @@ const MOODS = [
 export default function JournalPage() {
   const {
     entries, selectedDate, currentEntry, isLoading, isGenerating,
-    setDate, fetchEntries, fetchEntry, saveEntry, generateFromTimeArena,
+    setDate, fetchEntries, fetchEntry, saveEntry, clearEntry, generateFromTimeArena,
   } = useJournalStore();
 
   const [content, setContent] = useState("");
   const [mood, setMood] = useState("");
   const [error, setError] = useState("");
   const [showAttachments, setShowAttachments] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(0);
 
   useEffect(() => { fetchEntries(); fetchEntry(selectedDate); }, []);
 
@@ -39,6 +40,7 @@ export default function JournalPage() {
       setMood("");
     }
     setShowAttachments(false);
+    setConfirmClear(0);
   }, [currentEntry?.id, currentEntry?.date, selectedDate]);
 
   const date = new Date(selectedDate + "T00:00:00");
@@ -69,6 +71,23 @@ export default function JournalPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to generate");
     }
+  }
+
+  function handleClear() {
+    if (confirmClear === 0) {
+      setConfirmClear(1);
+      setTimeout(() => setConfirmClear((c) => c === 1 ? 0 : c), 4000);
+      return;
+    }
+    if (confirmClear === 1) {
+      setConfirmClear(2);
+      setTimeout(() => setConfirmClear((c) => c === 2 ? 0 : c), 4000);
+      return;
+    }
+    clearEntry(selectedDate);
+    setContent("");
+    setMood("");
+    setConfirmClear(0);
   }
 
   const entryId = currentEntry?.id || null;
@@ -119,6 +138,21 @@ export default function JournalPage() {
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Journal Entry</p>
           <div className="flex items-center gap-1.5">
+            {(content || mood) && (
+              <button
+                onClick={handleClear}
+                className={cn("flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-medium transition-all",
+                  confirmClear === 0
+                    ? "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    : confirmClear === 1
+                    ? "text-amber-600 bg-amber-50 dark:bg-amber-950/30"
+                    : "text-red-600 bg-red-50 dark:bg-red-950/30"
+                )}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                {confirmClear === 0 ? "Clear" : confirmClear === 1 ? "Sure?" : "Delete!"}
+              </button>
+            )}
             <button
               onClick={() => setShowAttachments(!showAttachments)}
               className={cn("flex h-8 w-8 items-center justify-center rounded-lg transition-colors",

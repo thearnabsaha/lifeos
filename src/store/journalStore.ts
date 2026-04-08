@@ -22,6 +22,7 @@ interface JournalState {
   fetchEntries: () => Promise<void>;
   fetchEntry: (date: string) => Promise<void>;
   saveEntry: (date: string, content: string, mood: string) => void;
+  clearEntry: (date: string) => Promise<void>;
   generateFromTimeArena: (date: string) => Promise<string | null>;
   flushSync: () => Promise<void>;
 }
@@ -107,6 +108,20 @@ export const useJournalStore = create<JournalState>((set, get) => ({
     const dirty = getDirty(); dirty.add(date); setDirtyDates(dirty);
     if (syncTimer) clearTimeout(syncTimer);
     syncTimer = setTimeout(() => get().flushSync(), 3000);
+  },
+
+  clearEntry: async (date) => {
+    try { localStorage.removeItem(ENTRY_PREFIX + date); } catch {}
+    const dirty = getDirty(); dirty.delete(date); setDirtyDates(dirty);
+    set({ currentEntry: null });
+
+    try {
+      await api.delete(`/journal/${date}`);
+    } catch {}
+
+    const entries = get().entries.filter((e) => e.date !== date);
+    try { localStorage.setItem(LIST_KEY, JSON.stringify(entries)); } catch {}
+    set({ entries });
   },
 
   generateFromTimeArena: async (date) => {
