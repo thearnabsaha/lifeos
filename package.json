@@ -10,14 +10,14 @@
     "db:setup": "curl http://localhost:3000/api/setup"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.2",
+    "@vercel/blob": "^2.8.0",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "groq-sdk": "^1.1.2",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.7.0",
+    "mongodb": "^7.6.0",
     "next": "16.2.2",
     "react": "19.2.4",
     "react-dom": "19.2.4",

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { del } from "@vercel/blob";
-import { sql } from "@/lib/db";
+import { getDb, toObjectId } from "@/lib/db";
 import { getUserId, unauthorized } from "@/lib/auth";
 
 export async function DELETE(
@@ -12,13 +12,21 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-    const result = await sql`
-      DELETE FROM attachments WHERE id = ${id} AND user_id = ${userId}
-      RETURNING file_url
-    `;
-    if (result.length > 0 && result[0].file_url) {
-      try { await del(result[0].file_url); } catch {}
+    const db = await getDb();
+    const targetId = toObjectId(id);
+    const query =
+      typeof targetId === "string"
+        ? { $or: [{ _id: targetId }, { id: targetId }], user_id: userId }
+        : { _id: targetId, user_id: userId };
+
+    const doc = await db.collection("attachments").findOneAndDelete(query as any);
+
+    if (doc && doc.file_url) {
+      try {
+        await del(doc.file_url);
+      } catch {}
     }
+
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Delete attachment error:", err);

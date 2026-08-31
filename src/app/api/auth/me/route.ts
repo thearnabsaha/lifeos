@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sql } from "@/lib/db";
+import { getDb, toObjectId } from "@/lib/db";
 import { getUserId, unauthorized } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
@@ -7,16 +7,23 @@ export async function GET(req: NextRequest) {
   if (!userId) return unauthorized();
 
   try {
-    const result = await sql`
-      SELECT id, email, name, created_at FROM users WHERE id = ${userId}
-    `;
-    const user = result[0];
+    const db = await getDb();
+    const targetId = toObjectId(userId);
+    const query = typeof targetId === "string" ? { $or: [{ _id: targetId }, { id: targetId }] } : { _id: targetId };
+    const user = await db.collection("users").findOne(query as any);
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ user });
+    return NextResponse.json({
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        name: user.name,
+        created_at: user.created_at,
+      },
+    });
   } catch (err) {
     console.error("Me error:", err);
     return NextResponse.json(

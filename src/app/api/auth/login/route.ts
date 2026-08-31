@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { sql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { signToken } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
@@ -14,10 +14,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await sql`
-      SELECT id, email, name, password FROM users WHERE email = ${email}
-    `;
-    const user = result[0];
+    const normalizedEmail = email.toLowerCase().trim();
+    const db = await getDb();
+    const user = await db.collection("users").findOne({ email: normalizedEmail });
 
     if (!user) {
       return NextResponse.json(
@@ -34,10 +33,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const token = signToken(user.id);
+    const userId = user._id.toString();
+    const token = signToken(userId);
     return NextResponse.json({
       token,
-      user: { id: user.id, email: user.email, name: user.name },
+      user: { id: userId, email: user.email, name: user.name },
     });
   } catch (err) {
     console.error("Login error:", err);

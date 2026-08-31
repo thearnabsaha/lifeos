@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ensureTables } from "@/lib/db";
+import { ensureIndexes } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get("x-setup-secret");
@@ -8,12 +8,12 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    await ensureTables();
-    return NextResponse.json({ status: "ok", message: "Tables created" });
+    await ensureIndexes();
+    return NextResponse.json({ status: "ok", message: "MongoDB indexes created" });
   } catch (err) {
     console.error("Setup error:", err);
     return NextResponse.json(
-      { error: "Failed to create tables" },
+      { error: "Failed to initialize database indexes" },
       { status: 500 }
     );
   }

@@ -1,111 +1,130 @@
-import { neon } from "@neondatabase/serverless";
+import { MongoClient, Db, ObjectId } from "mongodb";
 
-export const sql = neon(process.env.DATABASE_URL!);
-
-export async function ensureTables() {
-  await sql`
-    CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-      email TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL,
-      name TEXT,
-      created_at TIMESTAMPTZ DEFAULT NOW(),
-      updated_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS time_entries (
-      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      date TEXT NOT NULL,
-      hour INTEGER NOT NULL CHECK (hour >= 0 AND hour <= 23),
-      content TEXT DEFAULT '',
-      created_at TIMESTAMPTZ DEFAULT NOW(),
-      updated_at TIMESTAMPTZ DEFAULT NOW(),
-      UNIQUE(user_id, date, hour)
-    )
-  `;
-
-  await sql`CREATE INDEX IF NOT EXISTS idx_time_entries_user_date ON time_entries(user_id, date)`;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS notes (
-      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      title TEXT DEFAULT '',
-      content TEXT DEFAULT '',
-      pinned BOOLEAN DEFAULT false,
-      created_at TIMESTAMPTZ DEFAULT NOW(),
-      updated_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `;
-
-  await sql`CREATE INDEX IF NOT EXISTS idx_notes_user ON notes(user_id, updated_at DESC)`;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS journal_entries (
-      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      date TEXT NOT NULL,
-      mood TEXT DEFAULT '',
-      content TEXT DEFAULT '',
-      ai_generated BOOLEAN DEFAULT false,
-      created_at TIMESTAMPTZ DEFAULT NOW(),
-      updated_at TIMESTAMPTZ DEFAULT NOW(),
-      UNIQUE(user_id, date)
-    )
-  `;
-
-  await sql`CREATE INDEX IF NOT EXISTS idx_journal_user_date ON journal_entries(user_id, date DESC)`;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS reminders (
-      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      title TEXT NOT NULL,
-      due_date TEXT,
-      completed BOOLEAN DEFAULT false,
-      priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
-      created_at TIMESTAMPTZ DEFAULT NOW(),
-      updated_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `;
-
-  await sql`CREATE INDEX IF NOT EXISTS idx_reminders_user ON reminders(user_id, completed, due_date)`;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS attachments (
-      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      parent_type TEXT NOT NULL,
-      parent_id TEXT NOT NULL,
-      file_name TEXT NOT NULL,
-      file_url TEXT NOT NULL,
-      file_type TEXT NOT NULL DEFAULT 'other',
-      file_size INTEGER DEFAULT 0,
-      mime_type TEXT DEFAULT '',
-      created_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `;
-
-  await sql`CREATE INDEX IF NOT EXISTS idx_attachments_parent ON attachments(user_id, parent_type, parent_id)`;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS todos (
-      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      title TEXT NOT NULL,
-      completed BOOLEAN DEFAULT false,
-      due_date TEXT,
-      schedule TEXT DEFAULT 'today' CHECK (schedule IN ('today', 'tomorrow', 'upcoming', 'someday', 'recurring')),
-      recurrence TEXT,
-      priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
-      "order" INTEGER DEFAULT 0,
-      created_at TIMESTAMPTZ DEFAULT NOW(),
-      updated_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `;
-
-  await sql`CREATE INDEX IF NOT EXISTS idx_todos_user ON todos(user_id, completed, schedule, due_date)`;
+export function getMongoUri(): string {
+  return (
+    process.env.MONGODB_URI ||
+    process.env.DATABASE_URL ||
+    process.env.MONGODB_URL ||
+    "mongodb://127.0.0.1:27017/lifeos"
+  ).trim();
 }
+
+export function getDatabaseName(uri: string): string {
+  if (process.env.MONGODB_DB) return process.env.MONGODB_DB.trim();
+  if (uri) {
+    try {
+      const parsed = new URL(
+        uri.replace("mongodb+srv://", "http://").replace("mongodb://", "http://")
+      );
+      const pathDb = parsed.pathname.replace(/^\//, "").split("?")[0];
+      if (pathDb) return pathDb;
+    } catch {
+      // ignore
+    }
+  }
+  return "lifeos";
+}
+
+const options = {
+  maxPoolSize: 10,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+};
+
+declare global {
+  // eslint-disable-next-line no-var
+  var _mongoClientPromise: Promise<MongoClient> | undefined;
+}
+
+let cachedClient: MongoClient | null = null;
+let cachedPromise: Promise<MongoClient> | null = null;
+
+export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
+  const uri = getMongoUri();
+  const dbName = getDatabaseName(uri);
+
+  if (process.env.NODE_ENV === "development") {
+    if (!global._mongoClientPromise) {
+      const client = new MongoClient(uri, options);
+      global._mongoClientPromise = client.connect();
+    }
+    const client = await global._mongoClientPromise;
+    return { client, db: client.db(dbName) };
+  }
+
+  if (!cachedPromise) {
+    const client = new MongoClient(uri, options);
+    cachedPromise = client.connect();
+  }
+
+  const client = await cachedPromise;
+  return { client, db: client.db(dbName) };
+}
+
+export async function getDb(): Promise<Db> {
+  const { db } = await connectToDatabase();
+  return db;
+}
+
+export function toObjectId(id: string): ObjectId | string {
+  try {
+    if (ObjectId.isValid(id) && String(new ObjectId(id)) === id) {
+      return new ObjectId(id);
+    }
+  } catch {
+    // fallback
+  }
+  return id;
+}
+
+export function formatDoc<T extends Record<string, any>>(doc: T | null | undefined): any {
+  if (!doc) return null;
+  const { _id, ...rest } = doc;
+  return {
+    id: _id ? _id.toString() : doc.id || "",
+    ...rest,
+  };
+}
+
+export async function ensureIndexes() {
+  const db = await getDb();
+
+  // users
+  await db.collection("users").createIndex({ email: 1 }, { unique: true });
+
+  // time_entries
+  await db
+    .collection("time_entries")
+    .createIndex({ user_id: 1, date: 1, hour: 1 }, { unique: true });
+  await db
+    .collection("time_entries")
+    .createIndex({ user_id: 1, date: 1 });
+
+  // journal_entries
+  await db
+    .collection("journal_entries")
+    .createIndex({ user_id: 1, date: 1 }, { unique: true });
+
+  // todos
+  await db
+    .collection("todos")
+    .createIndex({ user_id: 1, completed: 1, schedule: 1, due_date: 1 });
+
+  // reminders
+  await db
+    .collection("reminders")
+    .createIndex({ user_id: 1, completed: 1, due_date: 1 });
+
+  // notes
+  await db
+    .collection("notes")
+    .createIndex({ user_id: 1, updated_at: -1 });
+
+  // attachments
+  await db
+    .collection("attachments")
+    .createIndex({ user_id: 1, parent_type: 1, parent_id: 1 });
+}
+
+// Backward compatibility alias for setup route
+export const ensureTables = ensureIndexes;

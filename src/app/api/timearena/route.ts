@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { getUserId, unauthorized } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
@@ -23,15 +23,38 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await sql`
-      INSERT INTO time_entries (user_id, date, hour, content)
-      VALUES (${userId}, ${date}, ${hour}, ${content})
-      ON CONFLICT (user_id, date, hour)
-      DO UPDATE SET content = ${content}, updated_at = NOW()
-      RETURNING id, hour, content, date, updated_at
-    `;
+    const db = await getDb();
+    const now = new Date();
+    const filter = { user_id: userId, date, hour };
+    const update = {
+      $set: { content, updated_at: now },
+      $setOnInsert: { created_at: now },
+    };
 
-    return NextResponse.json({ entry: result[0] });
+    const result = await db.collection("time_entries").findOneAndUpdate(
+      filter,
+      update,
+      { upsert: true, returnDocument: "after" }
+    );
+
+    const doc = result;
+    const entry = doc
+      ? {
+          id: doc._id.toString(),
+          hour: doc.hour,
+          content: doc.content,
+          date: doc.date,
+          updated_at: doc.updated_at,
+        }
+      : {
+          id: `${userId}_${date}_${hour}`,
+          hour,
+          content,
+          date,
+          updated_at: now,
+        };
+
+    return NextResponse.json({ entry });
   } catch (err) {
     console.error("Upsert entry error:", err);
     return NextResponse.json(

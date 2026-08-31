@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { put } from "@vercel/blob";
-import { sql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { getUserId, unauthorized } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
@@ -14,12 +14,18 @@ export async function POST(req: NextRequest) {
     const parentId = formData.get("parentId") as string;
 
     if (!file || !parentType || !parentId) {
-      return NextResponse.json({ error: "file, parentType, and parentId are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "file, parentType, and parentId are required" },
+        { status: 400 }
+      );
     }
 
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
-      return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 400 });
+      return NextResponse.json(
+        { error: "File too large (max 10MB)" },
+        { status: 400 }
+      );
     }
 
     const ext = file.name.split(".").pop() || "";
@@ -35,13 +41,31 @@ export async function POST(req: NextRequest) {
     else if (file.type.startsWith("audio/")) fileType = "audio";
     else if (file.type === "application/pdf") fileType = "pdf";
 
-    const result = await sql`
-      INSERT INTO attachments (user_id, parent_type, parent_id, file_name, file_url, file_type, file_size, mime_type)
-      VALUES (${userId}, ${parentType}, ${parentId}, ${file.name}, ${blob.url}, ${fileType}, ${file.size}, ${file.type})
-      RETURNING id, file_name, file_url, file_type, file_size, mime_type, created_at
-    `;
+    const db = await getDb();
+    const now = new Date();
+    const doc = {
+      user_id: userId,
+      parent_type: parentType,
+      parent_id: parentId,
+      file_name: file.name,
+      file_url: blob.url,
+      file_type: fileType,
+      file_size: file.size,
+      mime_type: file.type,
+      created_at: now,
+    };
 
-    return NextResponse.json({ attachment: result[0] }, { status: 201 });
+    const result = await db.collection("attachments").insertOne(doc);
+
+    return NextResponse.json(
+      {
+        attachment: {
+          id: result.insertedId.toString(),
+          ...doc,
+        },
+      },
+      { status: 201 }
+    );
   } catch (err) {
     console.error("Upload error:", err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

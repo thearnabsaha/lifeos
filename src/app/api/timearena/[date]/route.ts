@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { getUserId, unauthorized } from "@/lib/auth";
 
 export async function GET(
@@ -19,20 +19,20 @@ export async function GET(
       );
     }
 
-    const rows = await sql`
-      SELECT id, hour, content, date, updated_at
-      FROM time_entries
-      WHERE user_id = ${userId} AND date = ${date}
-      ORDER BY hour ASC
-    `;
+    const db = await getDb();
+    const rows = await db
+      .collection("time_entries")
+      .find({ user_id: userId, date })
+      .sort({ hour: 1 })
+      .toArray();
 
-    const entryMap: Record<number, (typeof rows)[0]> = {};
+    const entryMap: Record<number, any> = {};
     rows.forEach((e) => {
       entryMap[e.hour] = e;
     });
 
     const entries = Array.from({ length: 24 }, (_, hour) => ({
-      id: entryMap[hour]?.id ?? null,
+      id: entryMap[hour]?._id?.toString() ?? null,
       hour,
       content: entryMap[hour]?.content ?? "",
       date,

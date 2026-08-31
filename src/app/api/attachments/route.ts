@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sql } from "@/lib/db";
+import { getDb, formatDoc } from "@/lib/db";
 import { getUserId, unauthorized } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
@@ -10,19 +10,28 @@ export async function GET(req: NextRequest) {
   const parentId = req.nextUrl.searchParams.get("parentId");
 
   if (!parentType || !parentId) {
-    return NextResponse.json({ error: "parentType and parentId required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "parentType and parentId required" },
+      { status: 400 }
+    );
   }
 
   try {
-    const rows = await sql`
-      SELECT id, file_name, file_url, file_type, file_size, mime_type, created_at
-      FROM attachments
-      WHERE user_id = ${userId} AND parent_type = ${parentType} AND parent_id = ${parentId}
-      ORDER BY created_at DESC
-    `;
-    return NextResponse.json({ attachments: rows });
+    const db = await getDb();
+    const rows = await db
+      .collection("attachments")
+      .find({ user_id: userId, parent_type: parentType, parent_id: parentId })
+      .sort({ created_at: -1 })
+      .toArray();
+
+    return NextResponse.json({
+      attachments: rows.map((r) => formatDoc(r)),
+    });
   } catch (err) {
     console.error("List attachments error:", err);
-    return NextResponse.json({ error: "Failed to fetch attachments" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch attachments" },
+      { status: 500 }
+    );
   }
 }

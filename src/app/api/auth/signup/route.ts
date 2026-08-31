@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { sql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { signToken } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
@@ -21,8 +21,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const existing = await sql`SELECT id FROM users WHERE email = ${email}`;
-    if (existing.length > 0) {
+    const normalizedEmail = email.toLowerCase().trim();
+    const db = await getDb();
+
+    const existing = await db.collection("users").findOne({ email: normalizedEmail });
+    if (existing) {
       return NextResponse.json(
         { error: "Email already registered" },
         { status: 409 }
@@ -30,13 +33,20 @@ export async function POST(req: NextRequest) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const result = await sql`
-      INSERT INTO users (email, password, name)
-      VALUES (${email}, ${hashedPassword}, ${name || null})
-      RETURNING id, email, name
-    `;
+    const now = new Date();
+    const result = await db.collection("users").insertOne({
+      email: normalizedEmail,
+      password: hashedPassword,
+      name: name?.trim() || null,
+      created_at: now,
+      updated_at: now,
+    });
 
-    const user = result[0];
+    const user = {
+      id: result.insertedId.toString(),
+      email: normalizedEmail,
+      name: name?.trim() || null,
+    };
     const token = signToken(user.id);
     return NextResponse.json({ token, user }, { status: 201 });
   } catch (err) {
