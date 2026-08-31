@@ -3,14 +3,19 @@ import { MongoClient, Db, ObjectId } from "mongodb";
 export function getMongoUri(): string {
   return (
     process.env.MONGODB_URI ||
-    process.env.DATABASE_URL ||
+    process.env.lifeos_MONGODB_URI ||
+    process.env.LIFEOS_MONGODB_URI ||
     process.env.MONGODB_URL ||
+    process.env.DATABASE_URL ||
+    process.env.ATLAS_URI ||
     "mongodb://127.0.0.1:27017/lifeos"
   ).trim();
 }
 
 export function getDatabaseName(uri: string): string {
   if (process.env.MONGODB_DB) return process.env.MONGODB_DB.trim();
+  if (process.env.lifeos_MONGODB_DB) return process.env.lifeos_MONGODB_DB.trim();
+  if (process.env.LIFEOS_MONGODB_DB) return process.env.LIFEOS_MONGODB_DB.trim();
   if (uri) {
     try {
       const parsed = new URL(
