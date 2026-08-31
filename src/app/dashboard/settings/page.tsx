@@ -1,10 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useThemeStore, ACCENT_COLORS } from "@/store/themeStore";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { LogOut, Moon, Sun, Monitor, User, Palette } from "lucide-react";
+import {
+  LogOut,
+  Moon,
+  Sun,
+  Monitor,
+  User,
+  Palette,
+  FileSpreadsheet,
+  Download,
+  Loader2,
+  CheckCircle2
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const MODE_OPTIONS = [
@@ -16,6 +28,41 @@ const MODE_OPTIONS = [
 export default function SettingsPage() {
   const { user, logout } = useAuthStore();
   const { mode, accent, setMode, setAccent } = useThemeStore();
+  const [exporting, setExporting] = useState(false);
+  const [exportSuccess, setExportSuccess] = useState(false);
+  const [exportError, setExportError] = useState("");
+
+  async function handleExportExcel() {
+    try {
+      setExporting(true);
+      setExportError("");
+      setExportSuccess(false);
+
+      const res = await fetch("/api/export");
+      if (!res.ok) {
+        throw new Error("Failed to generate export");
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const today = new Date().toISOString().split("T")[0];
+      a.href = url;
+      a.download = `LifeOS_TimeArena_${today}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      setExportSuccess(true);
+      setTimeout(() => setExportSuccess(false), 4000);
+    } catch (err: any) {
+      console.error(err);
+      setExportError(err?.message || "Could not export data. Please try again.");
+    } finally {
+      setExporting(false);
+    }
+  }
 
   return (
     <div className="mx-auto max-w-lg px-4 pt-4">
@@ -24,6 +71,7 @@ export default function SettingsPage() {
       </h1>
 
       <div className="space-y-4">
+        {/* User Card */}
         <Card className="p-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-light">
@@ -40,6 +88,51 @@ export default function SettingsPage() {
           </div>
         </Card>
 
+        {/* Data & Export Card */}
+        <Card className="p-4">
+          <div className="mb-2 flex items-center gap-2">
+            <FileSpreadsheet className="h-4 w-4 text-accent" />
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
+              Data & Export
+            </h3>
+          </div>
+          <p className="mb-3 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+            Download your full 24-hour Time Arena history as an Excel spreadsheet (.csv).
+          </p>
+
+          {exportError && (
+            <div className="mb-3 rounded-lg bg-red-50 p-2.5 text-xs text-red-600 dark:bg-red-950/50 dark:text-red-400">
+              {exportError}
+            </div>
+          )}
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleExportExcel}
+            disabled={exporting}
+            className="w-full flex items-center justify-center gap-2 border-zinc-200 dark:border-zinc-700 hover:bg-accent-light hover:text-accent hover:border-accent transition-all"
+          >
+            {exporting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin text-accent" />
+                <span>Exporting spreadsheet...</span>
+              </>
+            ) : exportSuccess ? (
+              <>
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                <span className="text-green-600 dark:text-green-400">Spreadsheet Downloaded!</span>
+              </>
+            ) : (
+              <>
+                <Download className="h-4 w-4" />
+                <span>Export to Excel (.csv)</span>
+              </>
+            )}
+          </Button>
+        </Card>
+
+        {/* Appearance Card */}
         <Card className="p-4">
           <h3 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-white">
             Appearance
@@ -63,6 +156,7 @@ export default function SettingsPage() {
           </div>
         </Card>
 
+        {/* Accent Color */}
         <Card className="p-4">
           <div className="mb-3 flex items-center gap-2">
             <Palette className="h-4 w-4 text-zinc-500" />
@@ -92,6 +186,7 @@ export default function SettingsPage() {
           </div>
         </Card>
 
+        {/* About Card */}
         <Card className="p-4">
           <h3 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-white">
             About
@@ -108,6 +203,7 @@ export default function SettingsPage() {
           </div>
         </Card>
 
+        {/* Logout */}
         <Button
           variant="destructive"
           className="w-full"
