@@ -73,9 +73,7 @@ Open [http://localhost:3000](http://localhost:3000) or [http://localhost:3001](h
 
 ## Features
 
-- **Time Arena** — Track what you do every hour of the day
-- **Todos & Reminders** — Schedule tasks and priorities
-- **Journal** — Record your daily thoughts and mood
-- **Offline-first** — Everything saves locally, syncs in background
-- **PWA** — Install on your phone's home screen
-- **Dark Mode** — Light, dark, and system themes
+- **Time Arena** — 24-hour hour-by-hour time tracking and focus log
+- **Offline-first** — Instant local storage with background sync
+- **PWA** — High-res mobile install on home screen
+- **Dark Mode** — Light, dark, and system themes with custom accents
