@@ -15,9 +15,9 @@ export function BottomNav() {
 
   return (
     <nav
-      className="flex-shrink-0 w-full border-t border-zinc-200/80 bg-white/95 backdrop-blur-xl dark:border-zinc-800/80 dark:bg-zinc-950/95 z-50 select-none pt-2.5"
+      className="flex-shrink-0 w-full border-t border-zinc-200/80 bg-white/95 backdrop-blur-xl dark:border-zinc-800/80 dark:bg-zinc-950/95 z-50 select-none pt-2"
       style={{
-        paddingBottom: "max(env(safe-area-inset-bottom, 0px), 10px)",
+        paddingBottom: "max(calc(env(safe-area-inset-bottom, 0px) * 0.35), 8px)",
       }}
     >
       <div className="mx-auto flex max-w-sm items-center justify-around px-6">
@@ -44,7 +44,7 @@ export function BottomNav() {
                 )}
                 strokeWidth={isActive ? 2.5 : 1.75}
               />
-              <span className="text-[11px] mt-1 leading-tight tracking-tight">{label}</span>
+              <span className="text-[11px] mt-0.5 leading-tight tracking-tight">{label}</span>
             </Link>
           );
         })}
