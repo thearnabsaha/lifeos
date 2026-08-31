@@ -1,114 +1,118 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <defs>
-    <!-- Background Gradients -->
-    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0e1322"/>
-      <stop offset="50%" stop-color="#090b12"/>
-      <stop offset="100%" stop-color="#040508"/>
-    </linearGradient>
-    <linearGradient id="border-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.4"/>
-      <stop offset="40%" stop-color="#818cf8" stop-opacity="0.2"/>
-      <stop offset="100%" stop-color="#c084fc" stop-opacity="0.05"/>
+    <!-- Cute Pastel Light Pink Background -->
+    <linearGradient id="cute-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff1f5"/>
+      <stop offset="45%" stop-color="#ffe4ec"/>
+      <stop offset="100%" stop-color="#fbcfe8"/>
     </linearGradient>
 
-    <!-- Core Brand Gradient -->
-    <linearGradient id="brand-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="35%" stop-color="#6366f1"/>
-      <stop offset="70%" stop-color="#8b5cf6"/>
+    <!-- Delicate Border Glow -->
+    <linearGradient id="cute-border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#f9a8d4" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#f472b6" stop-opacity="0.3"/>
+    </linearGradient>
+
+    <!-- Aesthetic Sakura / Strawberry Cream Gradient -->
+    <linearGradient id="cute-glyph" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185"/>
+      <stop offset="50%" stop-color="#f43f5e"/>
       <stop offset="100%" stop-color="#ec4899"/>
     </linearGradient>
 
-    <linearGradient id="glow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#60a5fa"/>
-      <stop offset="50%" stop-color="#a855f7"/>
-      <stop offset="100%" stop-color="#ec4899"/>
+    <!-- Star Glow Gradient -->
+    <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f472b6"/>
+      <stop offset="100%" stop-color="#fb7185"/>
     </linearGradient>
 
-    <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.9"/>
-      <stop offset="40%" stop-color="#6366f1" stop-opacity="0.7"/>
-      <stop offset="70%" stop-color="#a855f7" stop-opacity="0.3"/>
-      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.1"/>
-    </linearGradient>
-
-    <!-- Ambient Glow Filter -->
-    <filter id="ambient-glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="36" result="blur"/>
-      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-    </filter>
-
-    <filter id="drop-shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
-    </filter>
-
-    <radialGradient id="center-radial" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.35"/>
-      <stop offset="50%" stop-color="#4338ca" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    <radialGradient id="center-blush" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f472b6" stop-opacity="0.25"/>
+      <stop offset="60%" stop-color="#fda4af" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#ffe4ec" stop-opacity="0"/>
     </radialGradient>
+
+    <!-- Soft Cloud Shadow -->
+    <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#f43f5e" flood-opacity="0.18"/>
+    </filter>
+
+    <filter id="sparkle-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#ec4899" flood-opacity="0.25"/>
+    </filter>
   </defs>
 
   <!-- Base Squircle -->
-  <rect width="512" height="512" rx="116" fill="url(#bg-grad)"/>
+  <rect width="512" height="512" rx="116" fill="url(#cute-bg)"/>
   
-  <!-- Subtle Border Stroke -->
-  <rect x="2" y="2" width="508" height="508" rx="114" fill="none" stroke="url(#border-grad)" stroke-width="3"/>
+  <!-- Subtle Cream Highlight Border -->
+  <rect x="3" y="3" width="506" height="506" rx="113" fill="none" stroke="url(#cute-border)" stroke-width="4"/>
 
-  <!-- Center Ambient Flare -->
-  <circle cx="256" cy="256" r="180" fill="url(#center-radial)"/>
+  <!-- Soft Rosy Blush Flare -->
+  <circle cx="256" cy="256" r="190" fill="url(#center-blush)"/>
 
-  <!-- Outer Orbit Chrono Ring -->
-  <circle cx="256" cy="256" r="168" fill="none" stroke="url(#ring-grad)" stroke-width="4" stroke-linecap="round" stroke-dasharray="720 180" transform="rotate(-45 256 256)"/>
+  <!-- Cute Minimal Orbit Ring -->
+  <circle cx="256" cy="256" r="162" fill="none" stroke="#f472b6" stroke-opacity="0.28" stroke-width="3" stroke-linecap="round" stroke-dasharray="16 14"/>
   
-  <!-- Subtle Dial Ticks for Time OS feel -->
-  <g opacity="0.45" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round">
-    <line x1="256" y1="98" x2="256" y2="108" />
-    <line x1="414" y1="256" x2="404" y2="256" />
-    <line x1="256" y1="414" x2="256" y2="404" />
-    <line x1="98" y1="256" x2="108" y2="256" />
-    
-    <!-- 45-deg subtle points -->
-    <circle cx="368" cy="144" r="2.5" fill="#818cf8"/>
-    <circle cx="368" cy="368" r="2.5" fill="#818cf8"/>
-    <circle cx="144" cy="368" r="2.5" fill="#818cf8"/>
-    <circle cx="144" cy="144" r="2.5" fill="#818cf8"/>
+  <!-- Delicate Aesthetic Pearls / Orbit Dots -->
+  <circle cx="256" cy="94" r="5" fill="#f43f5e" opacity="0.6"/>
+  <circle cx="418" cy="256" r="4.5" fill="#ec4899" opacity="0.5"/>
+  <circle cx="256" cy="418" r="4" fill="#fb7185" opacity="0.5"/>
+  <circle cx="94" cy="256" r="4.5" fill="#f472b6" opacity="0.5"/>
+
+  <!-- Adorable Main Monogram: Pillowy Minimalist "L" + Sparkle Star -->
+  <g filter="url(#soft-shadow)">
+    <!-- Pillowy Smooth "L" -->
+    <path d="M 196 148
+             C 196 132, 210 120, 226 120
+             C 242 120, 256 132, 256 148
+             L 256 312
+             C 256 322, 264 330, 274 330
+             L 338 330
+             C 354 330, 368 344, 368 360
+             C 368 376, 354 390, 338 390
+             L 246 390
+             C 218 390, 196 368, 196 340
+             Z"
+          fill="url(#cute-glyph)"/>
+
+    <!-- Subtle Glass Pillowy Highlight inside L -->
+    <path d="M 214 150
+             C 214 140, 220 134, 226 134
+             C 232 134, 238 140, 238 150
+             L 238 300
+             C 238 305, 234 310, 228 310
+             C 222 310, 214 305, 214 300
+             Z"
+          fill="#ffffff"
+          opacity="0.35"/>
   </g>
 
-  <!-- Orbital Node -->
-  <circle cx="375" cy="137" r="9" fill="#38bdf8" filter="url(#ambient-glow)"/>
-  <circle cx="375" cy="137" r="4.5" fill="#ffffff"/>
-
-  <!-- Stylized Geometric "L" & Infinity Ascend Core Monogram -->
-  <g filter="url(#drop-shadow)">
-    <!-- Vertical Spine of L with Rounded Top & Smooth Bevel -->
-    <path d="M 188 152
-             C 188 141, 197 132, 208 132
-             C 219 132, 228 141, 228 152
-             L 228 320
-             C 228 331, 237 340, 248 340
-             L 332 340
-             C 343 340, 352 349, 352 360
-             C 352 371, 343 380, 332 380
-             L 228 380
-             C 206 380, 188 362, 188 340
+  <!-- Cute Aesthetic Twinkle Sparkle Star ✨ -->
+  <g filter="url(#sparkle-shadow)">
+    <path d="M 334 162
+             C 334 186, 348 200, 372 200
+             C 348 200, 334 214, 334 238
+             C 334 214, 320 200, 296 200
+             C 320 200, 334 186, 334 162
              Z"
-          fill="url(#brand-grad)"/>
-
-    <!-- Dynamic Pulse Apex / Productivity Arrow-Blade -->
-    <path d="M 264 212
-             L 326 274
-             C 334 282, 334 294, 326 302
-             C 318 310, 306 310, 298 302
-             L 248 252
-             L 248 212
-             Z"
-          fill="url(#glow-grad)"
-          opacity="0.95"/>
-
-    <!-- Inner Core Spark / Diamond of Focus -->
-    <polygon points="328,190 344,206 328,222 312,206" fill="#38bdf8" opacity="0.9"/>
-    <polygon points="328,194 340,206 328,218 316,206" fill="#ffffff"/>
+          fill="url(#sparkle-grad)"/>
+    <circle cx="334" cy="200" r="4.5" fill="#ffffff"/>
   </g>
+
+  <!-- Baby Sparkle Star -->
+  <g opacity="0.85">
+    <path d="M 152 208
+             C 152 220, 160 228, 172 228
+             C 160 228, 152 236, 152 248
+             C 152 236, 144 228, 132 228
+             C 144 228, 152 220, 152 208
+             Z"
+          fill="#fb7185"/>
+    <circle cx="152" cy="228" r="2.5" fill="#ffffff"/>
+  </g>
+
+  <!-- Cute floating tiny heart-dot -->
+  <circle cx="382" cy="286" r="4" fill="#fda4af" opacity="0.9"/>
 </svg>

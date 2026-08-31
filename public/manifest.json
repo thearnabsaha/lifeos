@@ -4,8 +4,8 @@
   "description": "A minimal, mobile-first productivity system combining Notes, Journal, and 24-Hour Time Tracking.",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#090b12",
-  "theme_color": "#090b12",
+  "background_color": "#fff1f5",
+  "theme_color": "#ffe4ec",
   "orientation": "portrait",
   "icons": [
     {
