@@ -1,53 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <defs>
-    <!-- Soft aesthetic warm blush/peach-pink gradient from the reference -->
-    <linearGradient id="aesthetic-nude-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- Aesthetic Warm Nude Peach-Pink Gradient -->
+    <linearGradient id="clock-nude-bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#FCEDE8"/>
       <stop offset="60%" stop-color="#F8E3DC"/>
       <stop offset="100%" stop-color="#F3D9D1"/>
     </linearGradient>
   </defs>
 
-  <!-- iOS 14 style Squircle Base -->
-  <rect width="512" height="512" rx="116" fill="url(#aesthetic-nude-bg)"/>
+  <!-- iOS Squircle Base -->
+  <rect width="512" height="512" rx="116" fill="url(#clock-nude-bg)"/>
   <rect x="2" y="2" width="508" height="508" rx="114" fill="none" stroke="#ECCBC2" stroke-width="2.5" opacity="0.7"/>
 
-  <!-- Minimalist Line Art: Time Dial + Botanical Life Bloom + Rising Sun -->
-  <g fill="none" stroke="#463937" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
-    
-    <!-- Outer Time Dial (Circle of 24 Hours) -->
-    <circle cx="256" cy="256" r="148" />
+  <!-- Minimalist Normal Clock Line Art -->
+  <g fill="none" stroke="#463937" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Clock Outer Dial Circle -->
+    <circle cx="256" cy="256" r="150" />
 
-    <!-- 12, 3, 6, 9 Minimal Hour Markers -->
-    <line x1="256" y1="126" x2="256" y2="142" />
-    <line x1="386" y1="256" x2="370" y2="256" />
-    <line x1="256" y1="386" x2="256" y2="370" />
-    <line x1="126" y1="256" x2="142" y2="256" />
+    <!-- 12, 3, 6, 9 Hour Ticks -->
+    <line x1="256" y1="124" x2="256" y2="146" />
+    <line x1="388" y1="256" x2="366" y2="256" />
+    <line x1="256" y1="388" x2="256" y2="366" />
+    <line x1="124" y1="256" x2="146" y2="256" />
 
-    <!-- Center Clock Pivot Point -->
-    <circle cx="256" cy="268" r="4.5" fill="#463937" stroke-width="6"/>
+    <!-- Hour Hand (Pointing to 10) -->
+    <line x1="256" y1="256" x2="182" y2="182" stroke-width="18" />
 
-    <!-- Left Time Hand (Hour Hand @ 10) -->
-    <path d="M 256 268 L 192 208" />
+    <!-- Minute Hand (Pointing to 2) -->
+    <line x1="256" y1="256" x2="330" y2="182" stroke-width="15" />
 
-    <!-- Right Time Hand (Minute Hand @ 2) -->
-    <path d="M 256 268 L 320 208" />
-
-    <!-- Botanical Sprout of Life (Emerging from Time into Bloom) -->
-    <!-- Left Leaf -->
-    <path d="M 256 268
-             C 216 250, 204 196, 244 178
-             C 256 214, 252 248, 256 268 Z" />
-
-    <!-- Right Leaf -->
-    <path d="M 256 268
-             C 296 250, 308 196, 268 178
-             C 256 214, 260 248, 256 268 Z" />
-
-    <!-- Rising Sun / Morning Dawn Arc at the Top of the Sprout -->
-    <path d="M 230 162 A 26 26 0 0 1 282 162" />
-
-    <!-- Sun Ray Accent Dot -->
-    <circle cx="256" cy="142" r="2.5" fill="#463937" stroke-width="7"/>
+    <!-- Center Pivot Dot -->
+    <circle cx="256" cy="256" r="6" fill="#463937" stroke-width="8" />
   </g>
 </svg>

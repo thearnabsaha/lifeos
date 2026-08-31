@@ -1,39 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
   <defs>
-    <linearGradient id="tab-nude-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="tab-clock-bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#FCEDE8"/>
       <stop offset="60%" stop-color="#F8E3DC"/>
       <stop offset="100%" stop-color="#F3D9D1"/>
     </linearGradient>
   </defs>
 
-  <!-- Base Squircle -->
-  <rect width="32" height="32" rx="7.5" fill="url(#tab-nude-bg)"/>
+  <rect width="32" height="32" rx="7.5" fill="url(#tab-clock-bg)"/>
   <rect x="0.5" y="0.5" width="31" height="31" rx="7" fill="none" stroke="#ECCBC2" stroke-width="0.8"/>
 
-  <!-- Minimalist Line Art -->
-  <g fill="none" stroke="#463937" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-    <!-- Dial Circle -->
+  <g fill="none" stroke="#463937" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="16" cy="16" r="10.5" />
 
-    <!-- 12, 3, 6, 9 markers -->
-    <line x1="16" y1="6.8" x2="16" y2="8" />
-    <line x1="25.2" y1="16" x2="24" y2="16" />
-    <line x1="16" y1="25.2" x2="16" y2="24" />
-    <line x1="6.8" y1="16" x2="8" y2="16" />
+    <line x1="16" y1="6.5" x2="16" y2="8" />
+    <line x1="25.5" y1="16" x2="24" y2="16" />
+    <line x1="16" y1="25.5" x2="16" y2="24" />
+    <line x1="6.5" y1="16" x2="8" y2="16" />
 
-    <!-- Clock Pivot -->
-    <circle cx="16" cy="17" r="0.5" fill="#463937" stroke-width="0.8"/>
+    <line x1="16" y1="16" x2="11.5" y2="11.5" stroke-width="2" />
+    <line x1="16" y1="16" x2="20.5" y2="11.5" stroke-width="1.8" />
 
-    <!-- Clock Hands / Growth V -->
-    <path d="M 16 17 L 11.5 13" />
-    <path d="M 16 17 L 20.5 13" />
-
-    <!-- Sprout Leaves -->
-    <path d="M 16 17 C 13.5 15.8, 12.5 12, 15.5 11 C 16 13.5, 15.8 15.8, 16 17 Z" stroke-width="1.3" />
-    <path d="M 16 17 C 18.5 15.8, 19.5 12, 16.5 11 C 16 13.5, 16.2 15.8, 16 17 Z" stroke-width="1.3" />
-
-    <!-- Sun Arc -->
-    <path d="M 14.2 9.8 A 1.8 1.8 0 0 1 17.8 9.8" stroke-width="1.2" />
+    <circle cx="16" cy="16" r="0.6" fill="#463937" stroke-width="0.8" />
   </g>
 </svg>
