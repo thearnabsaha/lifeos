@@ -1,4 +1,105 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="40" fill="#2563eb"/>
-  <text x="96" y="120" text-anchor="middle" font-family="system-ui" font-weight="bold" font-size="80" fill="white">L</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 512 512">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bg-grad-192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e1322"/>
+      <stop offset="50%" stop-color="#090b12"/>
+      <stop offset="100%" stop-color="#040508"/>
+    </linearGradient>
+    <linearGradient id="border-grad-192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.4"/>
+      <stop offset="40%" stop-color="#818cf8" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#c084fc" stop-opacity="0.05"/>
+    </linearGradient>
+
+    <!-- Core Brand Gradient -->
+    <linearGradient id="brand-grad-192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="35%" stop-color="#6366f1"/>
+      <stop offset="70%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+
+    <linearGradient id="glow-grad-192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="50%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+
+    <linearGradient id="ring-grad-192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.9"/>
+      <stop offset="40%" stop-color="#6366f1" stop-opacity="0.7"/>
+      <stop offset="70%" stop-color="#a855f7" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.1"/>
+    </linearGradient>
+
+    <!-- Ambient Glow Filter -->
+    <filter id="ambient-glow-192" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="36" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="drop-shadow-192" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+
+    <radialGradient id="center-radial-192" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#4338ca" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Base Squircle -->
+  <rect width="512" height="512" rx="116" fill="url(#bg-grad-192)"/>
+  
+  <!-- Subtle Border Stroke -->
+  <rect x="2" y="2" width="508" height="508" rx="114" fill="none" stroke="url(#border-grad-192)" stroke-width="3"/>
+
+  <!-- Center Ambient Flare -->
+  <circle cx="256" cy="256" r="180" fill="url(#center-radial-192)"/>
+
+  <!-- Outer Orbit Chrono Ring -->
+  <circle cx="256" cy="256" r="168" fill="none" stroke="url(#ring-grad-192)" stroke-width="6" stroke-linecap="round" stroke-dasharray="720 180" transform="rotate(-45 256 256)"/>
+  
+  <!-- Subtle Dial Ticks for Time OS feel -->
+  <g opacity="0.45" stroke="#94a3b8" stroke-width="3" stroke-linecap="round">
+    <line x1="256" y1="98" x2="256" y2="108" />
+    <line x1="414" y1="256" x2="404" y2="256" />
+    <line x1="256" y1="414" x2="256" y2="404" />
+    <line x1="98" y1="256" x2="108" y2="256" />
+  </g>
+
+  <!-- Orbital Node -->
+  <circle cx="375" cy="137" r="11" fill="#38bdf8" filter="url(#ambient-glow-192)"/>
+  <circle cx="375" cy="137" r="5" fill="#ffffff"/>
+
+  <!-- Stylized Geometric "L" Monogram -->
+  <g filter="url(#drop-shadow-192)">
+    <path d="M 188 152
+             C 188 141, 197 132, 208 132
+             C 219 132, 228 141, 228 152
+             L 228 320
+             C 228 331, 237 340, 248 340
+             L 332 340
+             C 343 340, 352 349, 352 360
+             C 352 371, 343 380, 332 380
+             L 228 380
+             C 206 380, 188 362, 188 340
+             Z"
+          fill="url(#brand-grad-192)"/>
+
+    <path d="M 264 212
+             L 326 274
+             C 334 282, 334 294, 326 302
+             C 318 310, 306 310, 298 302
+             L 248 252
+             L 248 212
+             Z"
+          fill="url(#glow-grad-192)"
+          opacity="0.95"/>
+
+    <polygon points="328,190 344,206 328,222 312,206" fill="#38bdf8" opacity="0.9"/>
+    <polygon points="328,194 340,206 328,218 316,206" fill="#ffffff"/>
+  </g>
 </svg>
