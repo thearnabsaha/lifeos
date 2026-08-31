@@ -1,11 +1,11 @@
 {
   "name": "LifeOS — Personal Productivity",
   "short_name": "LifeOS",
-  "description": "A minimal, mobile-first productivity system combining Notes, Journal, and 24-Hour Time Tracking.",
+  "description": "A minimal, mobile-first productivity system for intentional daily time tracking.",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#fff1f5",
-  "theme_color": "#ffe4ec",
+  "background_color": "#FCEDE8",
+  "theme_color": "#F8E3DC",
   "orientation": "portrait",
   "icons": [
     {

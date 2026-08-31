@@ -1,100 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="cute-bg-192" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fff1f5"/>
-      <stop offset="45%" stop-color="#ffe4ec"/>
-      <stop offset="100%" stop-color="#fbcfe8"/>
+    <linearGradient id="aesthetic-nude-bg-192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCEDE8"/>
+      <stop offset="60%" stop-color="#F8E3DC"/>
+      <stop offset="100%" stop-color="#F3D9D1"/>
     </linearGradient>
-
-    <linearGradient id="cute-border-192" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
-      <stop offset="50%" stop-color="#f9a8d4" stop-opacity="0.5"/>
-      <stop offset="100%" stop-color="#f472b6" stop-opacity="0.3"/>
-    </linearGradient>
-
-    <linearGradient id="cute-glyph-192" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fb7185"/>
-      <stop offset="50%" stop-color="#f43f5e"/>
-      <stop offset="100%" stop-color="#ec4899"/>
-    </linearGradient>
-
-    <linearGradient id="sparkle-grad-192" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f472b6"/>
-      <stop offset="100%" stop-color="#fb7185"/>
-    </linearGradient>
-
-    <radialGradient id="center-blush-192" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#f472b6" stop-opacity="0.25"/>
-      <stop offset="60%" stop-color="#fda4af" stop-opacity="0.1"/>
-      <stop offset="100%" stop-color="#ffe4ec" stop-opacity="0"/>
-    </radialGradient>
-
-    <filter id="soft-shadow-192" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#f43f5e" flood-opacity="0.18"/>
-    </filter>
-
-    <filter id="sparkle-shadow-192" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#ec4899" flood-opacity="0.25"/>
-    </filter>
   </defs>
 
-  <rect width="512" height="512" rx="116" fill="url(#cute-bg-192)"/>
-  <rect x="3" y="3" width="506" height="506" rx="113" fill="none" stroke="url(#cute-border-192)" stroke-width="4"/>
+  <rect width="512" height="512" rx="116" fill="url(#aesthetic-nude-bg-192)"/>
+  <rect x="2" y="2" width="508" height="508" rx="114" fill="none" stroke="#ECCBC2" stroke-width="2.5" opacity="0.7"/>
 
-  <circle cx="256" cy="256" r="190" fill="url(#center-blush-192)"/>
-  <circle cx="256" cy="256" r="162" fill="none" stroke="#f472b6" stroke-opacity="0.28" stroke-width="4" stroke-linecap="round" stroke-dasharray="16 14"/>
+  <g fill="none" stroke="#463937" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="256" cy="256" r="148" />
 
-  <circle cx="256" cy="94" r="6" fill="#f43f5e" opacity="0.6"/>
-  <circle cx="418" cy="256" r="5" fill="#ec4899" opacity="0.5"/>
-  <circle cx="256" cy="418" r="5" fill="#fb7185" opacity="0.5"/>
-  <circle cx="94" cy="256" r="5" fill="#f472b6" opacity="0.5"/>
+    <line x1="256" y1="126" x2="256" y2="142" />
+    <line x1="386" y1="256" x2="370" y2="256" />
+    <line x1="256" y1="386" x2="256" y2="370" />
+    <line x1="126" y1="256" x2="142" y2="256" />
 
-  <g filter="url(#soft-shadow-192)">
-    <path d="M 196 148
-             C 196 132, 210 120, 226 120
-             C 242 120, 256 132, 256 148
-             L 256 312
-             C 256 322, 264 330, 274 330
-             L 338 330
-             C 354 330, 368 344, 368 360
-             C 368 376, 354 390, 338 390
-             L 246 390
-             C 218 390, 196 368, 196 340
-             Z"
-          fill="url(#cute-glyph-192)"/>
+    <circle cx="256" cy="268" r="5" fill="#463937" stroke-width="6"/>
 
-    <path d="M 214 150
-             C 214 140, 220 134, 226 134
-             C 232 134, 238 140, 238 150
-             L 238 300
-             C 238 305, 234 310, 228 310
-             C 222 310, 214 305, 214 300
-             Z"
-          fill="#ffffff"
-          opacity="0.35"/>
+    <path d="M 256 268 L 192 208" />
+    <path d="M 256 268 L 320 208" />
+
+    <path d="M 256 268
+             C 216 250, 204 196, 244 178
+             C 256 214, 252 248, 256 268 Z" />
+
+    <path d="M 256 268
+             C 296 250, 308 196, 268 178
+             C 256 214, 260 248, 256 268 Z" />
+
+    <path d="M 230 162 A 26 26 0 0 1 282 162" />
+    <circle cx="256" cy="142" r="3" fill="#463937" stroke-width="7"/>
   </g>
-
-  <g filter="url(#sparkle-shadow-192)">
-    <path d="M 334 162
-             C 334 186, 348 200, 372 200
-             C 348 200, 334 214, 334 238
-             C 334 214, 320 200, 296 200
-             C 320 200, 334 186, 334 162
-             Z"
-          fill="url(#sparkle-grad-192)"/>
-    <circle cx="334" cy="200" r="5" fill="#ffffff"/>
-  </g>
-
-  <g opacity="0.85">
-    <path d="M 152 208
-             C 152 220, 160 228, 172 228
-             C 160 228, 152 236, 152 248
-             C 152 236, 144 228, 132 228
-             C 144 228, 152 220, 152 208
-             Z"
-          fill="#fb7185"/>
-    <circle cx="152" cy="228" r="3" fill="#ffffff"/>
-  </g>
-
-  <circle cx="382" cy="286" r="4.5" fill="#fda4af" opacity="0.9"/>
 </svg>

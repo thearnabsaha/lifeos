@@ -12,7 +12,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "LifeOS — Your Personal Productivity System",
   description:
-    "A minimal, mobile-first productivity app combining Notes, Journal, and Time Tracking.",
+    "A minimal, mobile-first productivity app combining Time Tracking and Focus.",
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -39,7 +39,7 @@ export const viewport: Viewport = {
   userScalable: false,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fff1f5" },
+    { media: "(prefers-color-scheme: light)", color: "#FCEDE8" },
     { media: "(prefers-color-scheme: dark)", color: "#181419" },
   ],
 };
