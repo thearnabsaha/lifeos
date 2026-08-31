@@ -50,12 +50,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} min-h-full`} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body className="h-full overflow-hidden bg-background text-foreground antialiased">
+      <body className="min-h-[100dvh] bg-background text-foreground antialiased">
         <ThemeProvider>
           <ServiceWorkerRegister />
           {children}

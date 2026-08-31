@@ -7,7 +7,7 @@
   --accent-light: #dbeafe;
   --accent-dark: #1e40af;
   --nav-height: 56px;
-  --safe-bottom: 0px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .dark {
@@ -16,12 +16,6 @@
   --accent: #3b82f6;
   --accent-light: #1e3a5f;
   --accent-dark: #60a5fa;
-}
-
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  :root {
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
-  }
 }
 
 @theme inline {
@@ -35,20 +29,19 @@
 }
 
 html {
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  min-height: 100dvh;
 }
 
 body {
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  min-height: 100dvh;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
-  overscroll-behavior: none;
 }
 
 input,
