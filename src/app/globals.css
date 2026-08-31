@@ -6,7 +6,7 @@
   --accent: #2563eb;
   --accent-light: #dbeafe;
   --accent-dark: #1e40af;
-  --nav-height: 56px;
+  --nav-height: 44px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
