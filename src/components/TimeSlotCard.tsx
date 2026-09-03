@@ -8,6 +8,7 @@ interface TimeSlotCardProps {
   content: string;
   isToday?: boolean;
   onUpdate: (content: string) => void;
+  onNext?: () => void;
 }
 
 export function TimeSlotCard({
@@ -15,6 +16,7 @@ export function TimeSlotCard({
   content,
   isToday = true,
   onUpdate,
+  onNext,
 }: TimeSlotCardProps) {
   const [value, setValue] = useState(content);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -47,6 +49,16 @@ export function TimeSlotCard({
     debouncedSave(text);
     e.target.style.height = "auto";
     e.target.style.height = e.target.scrollHeight + "px";
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    // When Enter/Return is pressed without Shift, save immediately and move to next slot
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      onUpdate(value);
+      onNext?.();
+    }
   }
 
   return (
@@ -84,6 +96,8 @@ export function TimeSlotCard({
           ref={textareaRef}
           value={value}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          enterKeyHint="next"
           placeholder={
             isCurrentHour ? "What are you doing now?" : "What did you do?"
           }

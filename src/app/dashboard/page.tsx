@@ -115,6 +115,38 @@ export default function DashboardPage() {
     [updateEntry]
   );
 
+  // Navigate to the next hour's slot on Enter/Return
+  const handleNextSlot = useCallback((hour: number) => {
+    const nextHour = (hour + 1) % 24;
+    const nextEl = document.getElementById(`time-slot-${nextHour}`);
+    if (nextEl) {
+      const textarea = nextEl.querySelector("textarea");
+      if (textarea) {
+        textarea.focus();
+        const len = textarea.value.length;
+        textarea.setSelectionRange(len, len);
+      }
+
+      const mainContainer = nextEl.closest("main") || document.querySelector("main");
+      if (mainContainer) {
+        const mainRect = mainContainer.getBoundingClientRect();
+        const elRect = nextEl.getBoundingClientRect();
+        const relativeTop = elRect.top - mainRect.top + mainContainer.scrollTop;
+        const targetTop = Math.max(0, relativeTop - mainRect.height / 2 + elRect.height / 2);
+        mainContainer.scrollTo({
+          top: targetTop,
+          behavior: "smooth",
+        });
+      }
+
+      setTimeout(() => {
+        try {
+          nextEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        } catch {}
+      }, 50);
+    }
+  }, []);
+
   const filledCount = entries.filter((e) => e.content.trim()).length;
 
   return (
@@ -170,6 +202,7 @@ export default function DashboardPage() {
                 content={slot.content}
                 isToday={isToday}
                 onUpdate={handleUpdate(slot.hour)}
+                onNext={() => handleNextSlot(slot.hour)}
               />
             </div>
           ))}
