@@ -16,11 +16,10 @@ export default function DashboardLayout({
           style={{
             WebkitOverflowScrolling: "touch",
             paddingTop: "max(env(safe-area-inset-top, 0px), 8px)",
+            paddingBottom: "max(calc(env(safe-area-inset-bottom, 0px) + 72px), 80px)",
           }}
         >
-          <div className="pb-8">
-            {children}
-          </div>
+          {children}
         </main>
         <BottomNav />
       </div>

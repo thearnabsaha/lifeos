@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Clock, Settings } from "lucide-react";
@@ -12,15 +13,49 @@ const NAV_ITEMS = [
 
 export function BottomNav() {
   const pathname = usePathname();
+  const [isInputFocused, setIsInputFocused] = useState(false);
+
+  // Automatically hide bottom nav when typing on mobile so it doesn't float over the keyboard or leave dead space
+  useEffect(() => {
+    function handleFocusIn(e: FocusEvent) {
+      if (
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLInputElement
+      ) {
+        setIsInputFocused(true);
+      }
+    }
+
+    function handleFocusOut() {
+      setIsInputFocused(false);
+    }
+
+    window.addEventListener("focusin", handleFocusIn);
+    window.addEventListener("focusout", handleFocusOut);
+
+    return () => {
+      window.removeEventListener("focusin", handleFocusIn);
+      window.removeEventListener("focusout", handleFocusOut);
+    };
+  }, []);
 
   return (
-    <nav
-      className="flex-shrink-0 w-full border-t border-zinc-200/80 bg-white/95 backdrop-blur-xl dark:border-zinc-800/80 dark:bg-zinc-950/95 z-50 select-none pt-2"
+    <div
+      className={cn(
+        "fixed bottom-4 left-1/2 -translate-x-1/2 z-50 select-none transition-all duration-300 ease-out pointer-events-none",
+        isInputFocused ? "translate-y-20 opacity-0" : "translate-y-0 opacity-100"
+      )}
       style={{
-        paddingBottom: "max(calc(env(safe-area-inset-bottom, 0px) * 0.35), 8px)",
+        marginBottom: "max(calc(env(safe-area-inset-bottom, 0px) * 0.3), 0px)",
       }}
     >
-      <div className="mx-auto flex max-w-sm items-center justify-around px-6">
+      <nav
+        className={cn(
+          "pointer-events-auto flex items-center gap-1 p-1.5 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)]",
+          "bg-white/90 dark:bg-zinc-900/90 backdrop-blur-2xl",
+          "border border-zinc-200/80 dark:border-zinc-800/80"
+        )}
+      >
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive =
             href === "/dashboard"
@@ -31,24 +66,21 @@ export function BottomNav() {
               key={href}
               href={href}
               className={cn(
-                "flex flex-col items-center justify-center py-1 px-5 rounded-xl transition-all active:scale-95",
+                "flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all duration-200 active:scale-95",
                 isActive
-                  ? "text-accent font-semibold"
-                  : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+                  ? "bg-accent text-white shadow-sm font-semibold"
+                  : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/60"
               )}
             >
               <Icon
-                className={cn(
-                  "h-5 w-5 transition-transform",
-                  isActive && "scale-110"
-                )}
+                className="h-4 w-4 transition-transform"
                 strokeWidth={isActive ? 2.5 : 1.75}
               />
-              <span className="text-[11px] mt-0.5 leading-tight tracking-tight">{label}</span>
+              <span className="tracking-tight">{label}</span>
             </Link>
           );
         })}
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 }
