@@ -33,6 +33,7 @@ export default function DashboardPage() {
     fetchEntries();
   }, [fetchEntries]);
 
+  // Scroll only within the inner container without shifting the window
   const scrollToCurrentHour = useCallback(
     (smooth = true) => {
       if (!isToday) return false;
@@ -59,18 +60,10 @@ export default function DashboardPage() {
           top: targetTop,
           behavior: smooth ? "smooth" : "auto",
         });
+        return true;
       }
 
-      try {
-        el.scrollIntoView({
-          behavior: smooth ? "smooth" : "auto",
-          block: "center",
-        });
-      } catch {
-        // fallback
-      }
-
-      return true;
+      return false;
     },
     [isToday, currentHour]
   );
@@ -137,12 +130,6 @@ export default function DashboardPage() {
           behavior: "smooth",
         });
       }
-
-      setTimeout(() => {
-        try {
-          nextEl.scrollIntoView({ behavior: "smooth", block: "center" });
-        } catch {}
-      }, 50);
     }
   }, []);
 
