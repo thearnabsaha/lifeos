@@ -6,20 +6,22 @@ import { cn, formatHour, getCurrentHour } from "@/lib/utils";
 interface TimeSlotCardProps {
   hour: number;
   content: string;
+  isToday?: boolean;
   onUpdate: (content: string) => void;
 }
 
 export function TimeSlotCard({
   hour,
   content,
+  isToday = true,
   onUpdate,
 }: TimeSlotCardProps) {
   const [value, setValue] = useState(content);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentHour = getCurrentHour();
-  const isCurrentHour = hour === currentHour;
-  const isPast = hour < currentHour;
+  const isCurrentHour = isToday && hour === currentHour;
+  const isPast = isToday ? hour < currentHour : false;
 
   useEffect(() => {
     setValue(content);
@@ -49,10 +51,11 @@ export function TimeSlotCard({
 
   return (
     <div
+      id={`time-slot-${hour}`}
       className={cn(
         "group flex gap-3 rounded-2xl border p-3 transition-all duration-200 animate-fade-in",
         isCurrentHour
-          ? "border-accent-light bg-accent-light/30 shadow-sm"
+          ? "border-accent/40 bg-accent-light/40 shadow-sm ring-2 ring-accent/20 dark:bg-accent/10 dark:border-accent/50"
           : "border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900",
         isPast && !content && "opacity-50"
       )}
@@ -62,7 +65,7 @@ export function TimeSlotCard({
           className={cn(
             "text-xs font-semibold tabular-nums",
             isCurrentHour
-              ? "text-accent"
+              ? "text-accent font-bold"
               : "text-zinc-400 dark:text-zinc-500"
           )}
         >

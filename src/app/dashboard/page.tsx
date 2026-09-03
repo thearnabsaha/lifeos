@@ -6,7 +6,7 @@ import { useAuthStore } from "@/store/authStore";
 import { TimeSlotCard } from "@/components/TimeSlotCard";
 import { DatePicker } from "@/components/DatePicker";
 import { Spinner } from "@/components/ui/spinner";
-import { getCurrentHour } from "@/lib/utils";
+import { getCurrentHour, formatDate } from "@/lib/utils";
 import { Cloud, CloudOff } from "lucide-react";
 
 export default function DashboardPage() {
@@ -22,23 +22,91 @@ export default function DashboardPage() {
   } = useTimeArenaStore();
 
   const currentHourRef = useRef<HTMLDivElement>(null);
-  const hasScrolled = useRef(false);
+  const hasScrolledRef = useRef(false);
+  const prevDateRef = useRef(selectedDate);
+
+  const isToday = selectedDate === formatDate(new Date());
+  const currentHour = getCurrentHour();
 
   useEffect(() => {
     fetchEntries();
   }, [fetchEntries]);
 
-  useEffect(() => {
-    if (!isLoading && !hasScrolled.current && currentHourRef.current) {
-      setTimeout(() => {
-        currentHourRef.current?.scrollIntoView({
-          behavior: "smooth",
+  const scrollToCurrentHour = useCallback(
+    (smooth = true) => {
+      if (!isToday) return false;
+
+      const el =
+        currentHourRef.current ||
+        (typeof document !== "undefined"
+          ? (document.getElementById(`time-slot-${currentHour}`) as HTMLDivElement | null)
+          : null);
+
+      if (!el) return false;
+
+      const mainContainer = el.closest("main") || document.querySelector("main");
+      if (mainContainer) {
+        const mainRect = mainContainer.getBoundingClientRect();
+        const elRect = el.getBoundingClientRect();
+        const relativeTop = elRect.top - mainRect.top + mainContainer.scrollTop;
+        const targetTop = Math.max(
+          0,
+          relativeTop - mainRect.height / 2 + elRect.height / 2
+        );
+
+        mainContainer.scrollTo({
+          top: targetTop,
+          behavior: smooth ? "smooth" : "auto",
+        });
+      }
+
+      try {
+        el.scrollIntoView({
+          behavior: smooth ? "smooth" : "auto",
           block: "center",
         });
-        hasScrolled.current = true;
-      }, 100);
+      } catch {
+        // fallback
+      }
+
+      return true;
+    },
+    [isToday, currentHour]
+  );
+
+  // Auto-scroll on initial mount when opening the app
+  useEffect(() => {
+    if (hasScrolledRef.current || entries.length === 0) return;
+
+    // First attempt immediately on render
+    const t1 = setTimeout(() => {
+      if (scrollToCurrentHour(true)) {
+        hasScrolledRef.current = true;
+      }
+    }, 60);
+
+    // Second attempt once layout and styles are stabilized
+    const t2 = setTimeout(() => {
+      if (!hasScrolledRef.current && scrollToCurrentHour(true)) {
+        hasScrolledRef.current = true;
+      }
+    }, 250);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [entries, scrollToCurrentHour]);
+
+  // When user switches date back to today, scroll to current hour
+  useEffect(() => {
+    if (prevDateRef.current !== selectedDate) {
+      prevDateRef.current = selectedDate;
+      if (selectedDate === formatDate(new Date())) {
+        setTimeout(() => scrollToCurrentHour(true), 120);
+      }
     }
-  }, [isLoading]);
+  }, [selectedDate, scrollToCurrentHour]);
 
   const handleUpdate = useCallback(
     (hour: number) => (content: string) => {
@@ -47,7 +115,6 @@ export default function DashboardPage() {
     [updateEntry]
   );
 
-  const currentHour = getCurrentHour();
   const filledCount = entries.filter((e) => e.content.trim()).length;
 
   return (
@@ -64,7 +131,7 @@ export default function DashboardPage() {
         <div className="mt-1">
           {syncing ? (
             <Cloud className="h-4 w-4 animate-pulse text-accent" />
-          ) : navigator.onLine ? (
+          ) : typeof navigator !== "undefined" && navigator.onLine ? (
             <Cloud className="h-4 w-4 text-emerald-400" />
           ) : (
             <CloudOff className="h-4 w-4 text-zinc-400" />
@@ -72,7 +139,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="mb-4 rounded-2xl border border-zinc-100 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="mb-4 rounded-2xl border border-zinc-100 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900 shadow-sm">
         <DatePicker selectedDate={selectedDate} onDateChange={setDate} />
 
         <div className="mt-3 flex items-center justify-center gap-4 border-t border-zinc-100 pt-3 dark:border-zinc-800">
@@ -92,15 +159,16 @@ export default function DashboardPage() {
           <Spinner className="h-6 w-6" />
         </div>
       ) : (
-        <div className="space-y-2 pb-4">
+        <div className="space-y-2 pb-6">
           {entries.map((slot) => (
             <div
               key={slot.hour}
-              ref={slot.hour === currentHour ? currentHourRef : undefined}
+              ref={isToday && slot.hour === currentHour ? currentHourRef : undefined}
             >
               <TimeSlotCard
                 hour={slot.hour}
                 content={slot.content}
+                isToday={isToday}
                 onUpdate={handleUpdate(slot.hour)}
               />
             </div>

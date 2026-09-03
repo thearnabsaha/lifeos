@@ -42,9 +42,11 @@ function emptySlots(date: string): TimeSlot[] {
   }));
 }
 
+const initialDate = formatDate(new Date());
+
 export const useTimeArenaStore = create<TimeArenaState>((set, get) => ({
-  selectedDate: formatDate(new Date()),
-  entries: [],
+  selectedDate: initialDate,
+  entries: emptySlots(initialDate),
   isLoading: false,
   syncing: false,
 
@@ -98,96 +100,37 @@ export const useTimeArenaStore = create<TimeArenaState>((set, get) => ({
     // 2) Mark as dirty for sync
     markDirty(selectedDate, hour, content);
 
-    // 3) Schedule debounced sync (5s after last edit)
+    // 3) Debounce server sync
     if (syncTimer) clearTimeout(syncTimer);
-    syncTimer = setTimeout(() => {
-      get().flushSync();
+    set({ syncing: true });
+
+    syncTimer = setTimeout(async () => {
+      await get().flushSync();
     }, SYNC_DELAY);
   },
 
   flushSync: async () => {
     const dirty = getDirtyEntries();
-    if (dirty.length === 0) return;
+    if (dirty.length === 0) {
+      set({ syncing: false });
+      return;
+    }
 
-    set({ syncing: true });
-
-    const synced: { date: string; hour: number }[] = [];
-
-    // Send all dirty entries in parallel
-    const promises = dirty.map(async (entry) => {
-      try {
-        const data = await api.post<{ entry: TimeSlot }>("/timearena", {
-          date: entry.date,
-          hour: entry.hour,
-          content: entry.content,
+    try {
+      const synced: { date: string; hour: number }[] = [];
+      for (const item of dirty) {
+        await api.post("/timearena", {
+          date: item.date,
+          hour: item.hour,
+          content: item.content,
         });
-
-        synced.push({ date: entry.date, hour: entry.hour });
-
-        // Update the cached entry with the server-assigned id
-        const { selectedDate } = get();
-        if (entry.date === selectedDate) {
-          set((state) => ({
-            entries: state.entries.map((e) =>
-              e.hour === entry.hour && e.date === entry.date
-                ? { ...e, id: data.entry.id }
-                : e
-            ),
-          }));
-        }
-      } catch {
-        // Will retry on next sync
+        synced.push({ date: item.date, hour: item.hour });
       }
-    });
-
-    await Promise.all(promises);
-    clearDirtyEntries(synced);
-    set({ syncing: false });
+      clearDirtyEntries(synced);
+    } catch (err) {
+      console.warn("Sync failed, will retry:", err);
+    } finally {
+      set({ syncing: false });
+    }
   },
 }));
-
-// Sync any pending dirty entries when the page loads
-if (typeof window !== "undefined") {
-  window.addEventListener("load", () => {
-    setTimeout(() => {
-      useTimeArenaStore.getState().flushSync();
-    }, 2000);
-  });
-
-  // Sync before the user leaves
-  window.addEventListener("beforeunload", () => {
-    const dirty = getDirtyEntries();
-    if (dirty.length === 0) return;
-    // Use sendBeacon for reliable delivery on page close
-    const token = localStorage.getItem("token");
-    dirty.forEach((entry) => {
-      navigator.sendBeacon(
-        "/api/timearena",
-        new Blob(
-          [
-            JSON.stringify({
-              date: entry.date,
-              hour: entry.hour,
-              content: entry.content,
-            }),
-          ],
-          { type: "application/json" }
-        )
-      );
-      // sendBeacon doesn't support auth headers, so we also try fetch keepalive
-      fetch("/api/timearena", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          date: entry.date,
-          hour: entry.hour,
-          content: entry.content,
-        }),
-        keepalive: true,
-      }).catch(() => {});
-    });
-  });
-}
