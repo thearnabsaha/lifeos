@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Clock, Settings } from "lucide-react";
+import { Clock, BookOpen, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Time Arena", icon: Clock },
+  { href: "/dashboard/diary", label: "AI Diary", icon: BookOpen },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ] as const;
 
@@ -66,7 +67,7 @@ export function BottomNav() {
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all duration-200 active:scale-95",
+                "flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium transition-all duration-200 active:scale-95",
                 isActive
                   ? "bg-accent text-white shadow-sm font-semibold"
                   : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/60"

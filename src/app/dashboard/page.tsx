@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 import { useTimeArenaStore } from "@/store/timeArenaStore";
 import { useAuthStore } from "@/store/authStore";
 import { TimeSlotCard } from "@/components/TimeSlotCard";
 import { DatePicker } from "@/components/DatePicker";
 import { Spinner } from "@/components/ui/spinner";
 import { getCurrentHour, formatDate } from "@/lib/utils";
-import { Cloud, CloudOff } from "lucide-react";
+import { Cloud, CloudOff, Sparkles } from "lucide-react";
 
 export default function DashboardPage() {
   const user = useAuthStore((s) => s.user);
@@ -78,14 +79,12 @@ export default function DashboardPage() {
   useEffect(() => {
     if (hasScrolledRef.current || entries.length === 0) return;
 
-    // First attempt immediately on render
     const t1 = setTimeout(() => {
       if (scrollToCurrentHour(true)) {
         hasScrolledRef.current = true;
       }
     }, 60);
 
-    // Second attempt once layout and styles are stabilized
     const t2 = setTimeout(() => {
       if (!hasScrolledRef.current && scrollToCurrentHour(true)) {
         hasScrolledRef.current = true;
@@ -174,15 +173,21 @@ export default function DashboardPage() {
       <div className="mb-4 rounded-2xl border border-zinc-100 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900 shadow-sm">
         <DatePicker selectedDate={selectedDate} onDateChange={setDate} />
 
-        <div className="mt-3 flex items-center justify-center gap-4 border-t border-zinc-100 pt-3 dark:border-zinc-800">
-          <div className="text-center">
-            <span className="text-lg font-bold text-accent">
+        <div className="mt-3 flex items-center justify-between border-t border-zinc-100 pt-3 dark:border-zinc-800 px-1">
+          <div className="flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
+            <span className="text-base font-bold text-accent">
               {filledCount}
             </span>
-            <span className="text-xs text-zinc-400 dark:text-zinc-500">
-              /24 logged
-            </span>
+            <span>/24 logged</span>
           </div>
+
+          <Link
+            href="/dashboard/diary"
+            className="flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent hover:bg-accent/20 active:scale-95 transition-all"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>AI Diary</span>
+          </Link>
         </div>
       </div>
 
