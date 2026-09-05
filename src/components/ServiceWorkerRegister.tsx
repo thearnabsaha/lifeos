@@ -4,10 +4,25 @@ import { useEffect } from "react";
 
 export function ServiceWorkerRegister() {
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch((err) => {
-        console.warn("SW registration failed:", err);
-      });
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      if (process.env.NODE_ENV === "development") {
+        // In local development, unregister any lingering service workers to avoid stale chunk errors
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (const reg of registrations) {
+            reg.unregister();
+          }
+        });
+      } else {
+        // In production, register and check for updates
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((reg) => {
+            reg.update();
+          })
+          .catch((err) => {
+            console.warn("SW registration failed:", err);
+          });
+      }
     }
   }, []);
 
