@@ -16,9 +16,10 @@ export function BottomNav() {
 
   return (
     <nav
-      className="flex-shrink-0 w-full border-t border-zinc-200/80 bg-white/98 backdrop-blur-xl dark:border-zinc-800/80 dark:bg-zinc-950/98 z-50 select-none pt-1.5"
+      id="bottom-nav-bar"
+      className="fixed bottom-0 left-0 right-0 z-50 w-full border-t border-zinc-200/80 bg-white/98 backdrop-blur-xl dark:border-zinc-800/80 dark:bg-zinc-950/98 select-none pt-1.5"
       style={{
-        paddingBottom: "max(env(safe-area-inset-bottom, 0px), 10px)",
+        paddingBottom: "max(env(safe-area-inset-bottom, 0px), 12px)",
       }}
     >
       <div className="mx-auto flex h-12 max-w-md items-center justify-around px-4">

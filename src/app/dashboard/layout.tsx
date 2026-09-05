@@ -119,11 +119,11 @@ export default function DashboardLayout({
         <main
           ref={mainRef}
           id="main-scroll-container"
-          className="flex-1 min-h-0 w-full overflow-y-auto overscroll-y-contain"
+          className="h-full w-full overflow-y-auto overscroll-y-contain"
           style={{
             WebkitOverflowScrolling: "touch",
             paddingTop: "max(env(safe-area-inset-top, 0px), 8px)",
-            paddingBottom: "16px",
+            paddingBottom: "max(calc(env(safe-area-inset-bottom, 0px) + 72px), 84px)",
           }}
         >
           {children}

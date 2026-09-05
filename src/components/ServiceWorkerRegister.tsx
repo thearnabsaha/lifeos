@@ -14,10 +14,19 @@ export function ServiceWorkerRegister() {
         });
       } else {
         // In production, register and check for updates
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
+
         navigator.serviceWorker
           .register("/sw.js")
           .then((reg) => {
             reg.update();
+            setInterval(() => reg.update(), 60000);
           })
           .catch((err) => {
             console.warn("SW registration failed:", err);
