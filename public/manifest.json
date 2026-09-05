@@ -4,8 +4,8 @@
   "description": "A minimal, mobile-first productivity system for intentional daily time tracking.",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#FCEDE8",
-  "theme_color": "#F8E3DC",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
   "orientation": "portrait",
   "icons": [
     {
