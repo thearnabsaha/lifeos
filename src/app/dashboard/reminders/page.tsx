@@ -40,7 +40,7 @@ export default function RemindersPage() {
   return (
     <div className="mx-auto max-w-lg px-4 pt-4">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">Reminders</h1>
+        <h1 className="text-[28px] font-bold tracking-tight text-gradient animate-fade-in">Reminders</h1>
         <Button size="sm" onClick={() => setShowAdd(!showAdd)}>
           {showAdd ? <ChevronUp className="mr-1 h-4 w-4" /> : <Plus className="mr-1 h-4 w-4" />}
           {showAdd ? "Close" : "Add"}
@@ -87,7 +87,7 @@ export default function RemindersPage() {
           <p className="mt-1 text-sm text-zinc-500">Tap &quot;Add&quot; to create a reminder</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-4 stagger">
           {upcoming.length > 0 && (
             <div>
               <p className="mb-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider px-1">Upcoming ({upcoming.length})</p>

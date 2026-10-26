@@ -66,11 +66,11 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-lg px-4 pt-4">
-      <h1 className="mb-6 text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+      <h1 className="mb-6 text-[28px] font-bold tracking-tight text-gradient animate-fade-in">
         Settings
       </h1>
 
-      <div className="space-y-4">
+      <div className="space-y-4 stagger">
         {/* User Card */}
         <Card className="p-4">
           <div className="flex items-center gap-3">

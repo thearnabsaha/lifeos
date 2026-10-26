@@ -78,7 +78,7 @@ export default function DiaryPage() {
             <Sparkles className="h-3.5 w-3.5" />
             <span>AI Life Diary</span>
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+          <h1 className="text-[28px] font-bold tracking-tight text-gradient animate-fade-in">
             Daily Journal
           </h1>
         </div>
@@ -115,7 +115,7 @@ export default function DiaryPage() {
           <p className="text-xs">Opening diary page...</p>
         </div>
       ) : hasDiary ? (
-        <div className="space-y-4">
+        <div className="space-y-4 stagger">
           {/* Aesthetic Diary Paper Card */}
           <div className="relative overflow-hidden rounded-3xl border border-zinc-200/80 bg-gradient-to-b from-white to-zinc-50/50 p-5 shadow-sm dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950/80">
             {/* Soft decorative top line */}

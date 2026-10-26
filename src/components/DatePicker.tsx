@@ -31,7 +31,7 @@ export function DatePicker({ selectedDate, onDateChange }: DatePickerProps) {
     <div className="flex items-center justify-between">
       <button
         onClick={goBack}
-        className="flex h-9 w-9 items-center justify-center rounded-xl text-zinc-500 transition-colors hover:bg-zinc-100 active:bg-zinc-200 dark:text-zinc-400 dark:hover:bg-zinc-800"
+        className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/5 text-zinc-600 transition-all hover:bg-zinc-900/10 active:scale-90 dark:bg-white/5 dark:text-zinc-300 dark:hover:bg-white/10"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
@@ -64,7 +64,7 @@ export function DatePicker({ selectedDate, onDateChange }: DatePickerProps) {
 
       <button
         onClick={goForward}
-        className="flex h-9 w-9 items-center justify-center rounded-xl text-zinc-500 transition-colors hover:bg-zinc-100 active:bg-zinc-200 dark:text-zinc-400 dark:hover:bg-zinc-800"
+        className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/5 text-zinc-600 transition-all hover:bg-zinc-900/10 active:scale-90 dark:bg-white/5 dark:text-zinc-300 dark:hover:bg-white/10"
       >
         <ChevronRight className="h-5 w-5" />
       </button>

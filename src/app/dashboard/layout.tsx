@@ -110,7 +110,7 @@ export default function DashboardLayout({
     <AuthGuard>
       <div
         id="app-viewport-container"
-        className="relative flex flex-col h-full w-full min-h-full overflow-hidden bg-zinc-50 dark:bg-zinc-950"
+        className="relative flex flex-col h-full w-full min-h-full overflow-hidden app-bg"
         style={{
           height: "100%",
           minHeight: "-webkit-fill-available",

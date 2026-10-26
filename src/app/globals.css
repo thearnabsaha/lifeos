@@ -1,20 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f7f7fb;
   --foreground: #09090b;
   --accent: #2563eb;
   --accent-light: #dbeafe;
   --accent-dark: #1e40af;
   --nav-height: 48px;
+  --surface: #ffffff;
+  --border-soft: rgba(24, 24, 27, 0.07);
 }
 
 .dark {
-  --background: #09090b;
+  --background: #07070a;
   --foreground: #fafafa;
   --accent: #3b82f6;
   --accent-light: #1e3a5f;
   --accent-dark: #60a5fa;
+  --surface: #18181b;
+  --border-soft: rgba(255, 255, 255, 0.07);
 }
 
 @theme inline {
@@ -23,6 +27,7 @@
   --color-accent: var(--accent);
   --color-accent-light: var(--accent-light);
   --color-accent-dark: var(--accent-dark);
+  --color-surface: var(--surface);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -90,6 +95,83 @@ textarea {
 
 .animate-slide-up {
   animation: slide-up 0.4s ease-out;
+}
+
+/* ---------- LifeOS design system ---------- */
+.app-bg {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(60rem 30rem at 110% -10%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 60%),
+    radial-gradient(40rem 24rem at -20% 0%, color-mix(in oklab, #a855f7 10%, transparent), transparent 60%),
+    radial-gradient(50rem 30rem at 50% 120%, color-mix(in oklab, var(--accent) 8%, transparent), transparent 60%);
+  background-attachment: fixed;
+}
+
+.glass {
+  background: color-mix(in oklab, var(--surface) 72%, transparent);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 1px 0 0 rgba(255,255,255,0.06) inset, 0 8px 30px -12px rgba(0,0,0,0.12);
+}
+.dark .glass {
+  box-shadow: 0 1px 0 0 rgba(255,255,255,0.05) inset, 0 10px 40px -16px rgba(0,0,0,0.6);
+}
+
+.text-gradient {
+  background-image: linear-gradient(135deg, var(--foreground) 30%, var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.accent-gradient {
+  background-image: linear-gradient(135deg, color-mix(in oklab, var(--accent) 85%, white), var(--accent) 45%, color-mix(in oklab, var(--accent) 70%, #7c3aed));
+}
+
+.glow {
+  box-shadow: 0 8px 24px -8px color-mix(in oklab, var(--accent) 60%, transparent);
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--foreground) 6%, transparent);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--foreground) 6%, transparent), transparent);
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes float-orb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, -30px) scale(1.08); }
+}
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.55;
+  animation: float-orb 12s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.stagger > * { animation: slide-up 0.45s cubic-bezier(.2,.8,.2,1) both; }
+.stagger > *:nth-child(2) { animation-delay: 40ms; }
+.stagger > *:nth-child(3) { animation-delay: 80ms; }
+.stagger > *:nth-child(4) { animation-delay: 120ms; }
+.stagger > *:nth-child(5) { animation-delay: 160ms; }
+.stagger > *:nth-child(n+6) { animation-delay: 200ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .orb, .stagger > *, .skeleton::after, .animate-fade-in, .animate-slide-up { animation: none !important; }
 }
 
 ::-webkit-scrollbar {

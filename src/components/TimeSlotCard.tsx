@@ -67,23 +67,31 @@ export function TimeSlotCard({
       id={`time-slot-${hour}`}
       onClick={() => textareaRef.current?.focus()}
       className={cn(
-        "group relative flex items-start gap-3 rounded-2xl border p-3.5 transition-all duration-200 cursor-text touch-manipulation",
+        "group relative flex items-start gap-3 overflow-hidden rounded-2xl border p-3.5 transition-all duration-300 cursor-text touch-manipulation backdrop-blur-xl",
         // Base styling
-        "bg-white dark:bg-zinc-900",
+        "bg-white/75 dark:bg-zinc-900/60",
         // Focus state: clean native card highlight (no inner box flash)
         isFocused
-          ? "border-accent ring-2 ring-accent/20 shadow-md scale-[1.005]"
+          ? "border-accent/60 ring-4 ring-accent/10 glow scale-[1.01]"
           : isCurrentHour
-          ? "border-accent/40 bg-accent-light/30 dark:bg-accent/10 shadow-sm"
-          : "border-zinc-200/70 dark:border-zinc-800/80 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700",
+          ? "border-accent/40 !bg-accent/[0.07] glow"
+          : "border-zinc-900/[0.06] dark:border-white/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:border-zinc-900/15 dark:hover:border-white/15",
         isPast && !content && !isFocused && "opacity-55"
       )}
     >
+      {(isCurrentHour || isFocused || value.trim()) && (
+        <span
+          className={cn(
+            "absolute left-0 top-3 bottom-3 w-[3px] rounded-r-full transition-all",
+            isCurrentHour || isFocused ? "accent-gradient" : "bg-accent/30"
+          )}
+        />
+      )}
       {/* Time column */}
       <div className="flex flex-col items-center pt-0.5 select-none shrink-0 min-w-[2.25rem]">
         <span
           className={cn(
-            "text-xs font-semibold tabular-nums tracking-tight",
+            "font-mono text-[13px] font-semibold tabular-nums tracking-tight",
             isCurrentHour
               ? "text-accent font-bold"
               : isFocused
@@ -97,7 +105,7 @@ export function TimeSlotCard({
           {formatHour(hour).split(" – ")[1]}
         </span>
         {isCurrentHour && (
-          <div className="mt-1 h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+          <span className="mt-1.5 rounded-full bg-accent px-1.5 py-px text-[8px] font-bold uppercase tracking-wider text-white">Now</span>
         )}
       </div>
 

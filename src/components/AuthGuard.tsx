@@ -21,8 +21,11 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-white dark:bg-zinc-950">
-        <Spinner className="h-8 w-8" />
+      <div className="app-bg flex h-screen flex-col items-center justify-center gap-4">
+        <div className="accent-gradient glow flex h-14 w-14 items-center justify-center rounded-[20px] animate-pulse">
+          <Spinner className="h-6 w-6 border-white/30 border-t-white" />
+        </div>
+        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-zinc-400">LifeOS</p>
       </div>
     );
   }

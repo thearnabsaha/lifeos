@@ -17,7 +17,7 @@ export function BottomNav() {
   return (
     <nav
       id="bottom-nav-bar"
-      className="fixed bottom-0 left-0 right-0 z-50 w-full border-t border-zinc-200/80 bg-white/98 backdrop-blur-xl dark:border-zinc-800/80 dark:bg-zinc-950/98 select-none pt-1.5"
+      className="fixed bottom-0 left-0 right-0 z-50 w-full border-t border-zinc-900/5 bg-white/80 backdrop-blur-2xl backdrop-saturate-150 dark:border-white/5 dark:bg-zinc-950/80 select-none pt-1.5"
       style={{
         paddingBottom: "max(env(safe-area-inset-bottom, 0px), 12px)",
       }}
@@ -33,19 +33,29 @@ export function BottomNav() {
               key={href}
               href={href}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 px-4 h-full text-[11px] font-medium transition-colors active:scale-95",
+                "relative flex flex-col items-center justify-center gap-0.5 px-4 h-full text-[11px] font-medium transition-all duration-300 active:scale-90",
                 isActive
                   ? "text-accent font-semibold"
                   : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
               )}
             >
-              <Icon
+              <span
                 className={cn(
-                  "h-5 w-5 transition-transform",
-                  isActive && "scale-105"
+                  "absolute -top-1.5 h-[3px] rounded-full bg-accent transition-all duration-300",
+                  isActive ? "w-6 opacity-100 glow" : "w-0 opacity-0"
                 )}
-                strokeWidth={isActive ? 2.5 : 1.75}
               />
+              <span
+                className={cn(
+                  "flex h-7 w-12 items-center justify-center rounded-full transition-all duration-300",
+                  isActive && "bg-accent/12"
+                )}
+              >
+                <Icon
+                  className={cn("h-5 w-5 transition-transform duration-300", isActive && "scale-105")}
+                  strokeWidth={isActive ? 2.4 : 1.75}
+                />
+              </span>
               <span className="leading-tight tracking-tight">{label}</span>
             </Link>
           );
