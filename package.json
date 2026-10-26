@@ -10,6 +10,7 @@
     "db:setup": "curl http://localhost:3000/api/setup"
   },
   "dependencies": {
+    "@modelcontextprotocol/server": "^2.4.0",
     "@vercel/blob": "^2.8.0",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
@@ -17,11 +18,13 @@
     "date-fns": "^4.1.0",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.7.0",
+    "mcp-handler": "^2.3.0",
     "mongodb": "^7.6.0",
     "next": "16.2.2",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "tailwind-merge": "^3.5.0",
+    "zod": "^4.6.7",
     "zustand": "^5.0.12"
   },
   "devDependencies": {

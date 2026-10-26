@@ -77,3 +77,24 @@ Open [http://localhost:3000](http://localhost:3000) or [http://localhost:3001](h
 - **Offline-first** — Instant local storage with background sync
 - **PWA** — High-res mobile install on home screen
 - **Dark Mode** — Light, dark, and system themes with custom accents
+
+
+## MCP server (Grok Bot / Cursor / Claude)
+Endpoint: `https://<your-domain>/api/mcp` (Streamable HTTP), auth with `Authorization: Bearer <api key>`.
+
+1. Sign in → **Settings → MCP / AI assistant** → *Create API key*. Copy it (shown once; only a SHA-256 hash is stored in the `api_keys` collection). Revoke any time from the same card.
+2. In **Grok Bot**: add a custom MCP connector → URL `https://<your-domain>/api/mcp` → header `Authorization: Bearer los_…`.
+3. Other clients, e.g. Cursor / Claude Desktop `mcp.json`:
+```json
+{ "mcpServers": { "lifeos": { "url": "https://<your-domain>/api/mcp", "headers": { "Authorization": "Bearer los_..." } } } }
+```
+
+Tools:
+- Time Arena: `get_day` (date?, onlyFilled?), `set_slots` (date?, slots[{hour, content}])
+- Diary: `list_diary_entries`, `search_diary`, `get_diary_entry`, `create_diary_entry` (writes your text, or generates with the free built-in summarizer), `update_diary_entry`
+- Reminders: `list_reminders`, `create_reminder`, `update_reminder`, `complete_reminder`, `delete_reminder`
+- Summary: `get_daily_summary` (slots + diary + due/overdue reminders)
+
+Dates are `YYYY-MM-DD` (default: today in `LIFEOS_TZ`, optional env, default `Asia/Kolkata`). No other new env vars beyond the app's existing `MONGODB_URI` (and `JWT_SECRET` for the app login). Runs fine on Vercel Hobby.
+
+Smoke test: `MCP_URL=https://<domain>/api/mcp MCP_KEY=los_... node scripts/mcp-smoke.mjs [full]` (`full` writes a slot at 09:00 today and a temporary reminder, then deletes the reminder).

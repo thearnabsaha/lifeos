@@ -18,6 +18,7 @@ import {
   CheckCircle2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { McpSection } from "@/components/McpSection";
 
 const MODE_OPTIONS = [
   { value: "light" as const, label: "Light", icon: Sun },
@@ -133,6 +134,8 @@ export default function SettingsPage() {
         </Card>
 
         {/* Appearance Card */}
+        <McpSection />
+
         <Card className="p-4">
           <h3 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-white">
             Appearance
