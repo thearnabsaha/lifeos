@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import { cn, formatHour, getCurrentHour } from "@/lib/utils";
 
 interface TimeSlotCardProps {
@@ -27,13 +27,48 @@ export function TimeSlotCard({
   const isCurrentHour = isToday && hour === currentHour;
   const isPast = isToday ? hour < currentHour : false;
 
-  useEffect(() => {
-    setValue(content);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${Math.max(textareaRef.current.scrollHeight, 36)}px`;
+  // Grow the textarea to fit its full text. The old code measured the
+  // height only once when the content prop changed, which on mobile could
+  // happen before the final layout width settled: the text was measured
+  // as one line, then wrapped to two lines at the real width, and the
+  // second line was clipped by overflow-hidden. Re-measure whenever the
+  // content changes AND whenever the textarea's width changes (resize,
+  // font load, viewport change), so long entries are never cut off.
+  const resizeTextarea = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    const next = Math.max(el.scrollHeight, 36);
+    // Only write when it actually changes, so the ResizeObserver below
+    // cannot ping-pong on its own height updates.
+    if (Math.abs(el.offsetHeight - next) > 1) {
+      el.style.height = `${next}px`;
     }
-  }, [content]);
+  }, []);
+
+  useLayoutEffect(() => {
+    setValue(content);
+    resizeTextarea();
+  }, [content, resizeTextarea]);
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    // Width changes (rotation, viewport, font swap) re-wrap the text,
+    // so re-measure on every box change.
+    const observer =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => resizeTextarea())
+        : null;
+    observer?.observe(el);
+    window.addEventListener("resize", resizeTextarea);
+    // Fonts loading after first paint can also re-wrap the text.
+    document.fonts?.ready.then(() => resizeTextarea()).catch(() => {});
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", resizeTextarea);
+    };
+  }, [resizeTextarea]);
 
   const debouncedSave = useCallback(
     (text: string) => {
