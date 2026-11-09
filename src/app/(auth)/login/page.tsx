@@ -8,10 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AuthShell } from "@/components/AuthShell";
 import { ArrowRight, Loader2 } from "lucide-react";
+import {
+  type FieldErrors,
+  validateLoginFields,
+} from "@/lib/validation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const login = useAuthStore((s) => s.login);
@@ -20,8 +25,11 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    const next = validateLoginFields(email, password);
+    setFieldErrors(next);
+    if (next.email || next.password) return;
 
+    setLoading(true);
     try {
       await login(email, password);
       router.replace("/dashboard");
@@ -46,7 +54,7 @@ export default function LoginPage() {
         </>
       }
     >
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           {error && (
             <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive lr-rise">
               {error}
@@ -54,32 +62,47 @@ export default function LoginPage() {
           )}
 
           <div className="space-y-1.5">
-            <label className="mono-label">Username or email</label>
+            <label className="mono-label" htmlFor="login-email">Email</label>
             <Input
+              id="login-email"
               className="h-11"
               type="text"
-              placeholder="username or you@example.com"
+              inputMode="email"
+              placeholder="you@example.com"
               autoCapitalize="none"
               autoCorrect="off"
               spellCheck={false}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (fieldErrors.email) setFieldErrors((f) => ({ ...f, email: undefined }));
+              }}
+              aria-invalid={!!fieldErrors.email}
               autoComplete="username"
             />
+            {fieldErrors.email && (
+              <p className="text-xs text-destructive">{fieldErrors.email}</p>
+            )}
           </div>
 
           <div className="space-y-1.5">
-            <label className="mono-label">Password</label>
+            <label className="mono-label" htmlFor="login-password">Password</label>
             <Input
+              id="login-password"
               className="h-11"
               type="password"
               placeholder="••••••••"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (fieldErrors.password) setFieldErrors((f) => ({ ...f, password: undefined }));
+              }}
+              aria-invalid={!!fieldErrors.password}
               autoComplete="current-password"
             />
+            {fieldErrors.password && (
+              <p className="text-xs text-destructive">{fieldErrors.password}</p>
+            )}
           </div>
 
           <Button type="submit" size="lg" className="group mt-2 h-11 w-full rounded-lg" disabled={loading}>

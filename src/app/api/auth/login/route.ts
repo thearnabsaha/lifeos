@@ -2,17 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getDb } from "@/lib/db";
 import { signToken } from "@/lib/auth";
+import { firstError, validateLoginFields } from "@/lib/validation";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    // Accept a plain username or an email, sent as `email` or `username`.
+    // Accept `email` or legacy `username` field name from older clients.
     const email = body?.email ?? body?.username;
     const password = body?.password;
 
-    if (typeof email !== "string" || typeof password !== "string" || !email.trim() || !password) {
+    if (typeof email !== "string" || typeof password !== "string") {
       return NextResponse.json(
-        { error: "Username and password are required" },
+        { error: "Email and password are required" },
+        { status: 400 }
+      );
+    }
+
+    const fieldErrors = validateLoginFields(email, password);
+    const message = firstError(fieldErrors);
+    if (message) {
+      return NextResponse.json(
+        { error: message, fields: fieldErrors },
         { status: 400 }
       );
     }

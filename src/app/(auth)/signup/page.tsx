@@ -8,11 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AuthShell } from "@/components/AuthShell";
 import { ArrowRight, Loader2 } from "lucide-react";
+import {
+  type FieldErrors,
+  validateSignupFields,
+} from "@/lib/validation";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const signup = useAuthStore((s) => s.signup);
@@ -21,15 +26,13 @@ export default function SignupPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
-    }
+    const next = validateSignupFields(email, password, name);
+    setFieldErrors(next);
+    if (next.name || next.email || next.password) return;
 
     setLoading(true);
     try {
-      await signup(email, password, name || undefined);
+      await signup(email, password, name.trim());
       router.replace("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Signup failed");
@@ -52,7 +55,7 @@ export default function SignupPage() {
         </>
       }
     >
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           {error && (
             <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive lr-rise">
               {error}
@@ -60,44 +63,66 @@ export default function SignupPage() {
           )}
 
           <div className="space-y-1.5">
-            <label className="mono-label">Name</label>
+            <label className="mono-label" htmlFor="signup-name">Name</label>
             <Input
+              id="signup-name"
               className="h-11"
               type="text"
               placeholder="Your name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (fieldErrors.name) setFieldErrors((f) => ({ ...f, name: undefined }));
+              }}
+              aria-invalid={!!fieldErrors.name}
               autoComplete="name"
             />
+            {fieldErrors.name && (
+              <p className="text-xs text-destructive">{fieldErrors.name}</p>
+            )}
           </div>
 
           <div className="space-y-1.5">
-            <label className="mono-label">Username or email</label>
+            <label className="mono-label" htmlFor="signup-email">Email</label>
             <Input
+              id="signup-email"
               className="h-11"
-              type="text"
-              placeholder="username or you@example.com"
+              type="email"
+              placeholder="you@example.com"
               autoCapitalize="none"
               autoCorrect="off"
               spellCheck={false}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="username"
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (fieldErrors.email) setFieldErrors((f) => ({ ...f, email: undefined }));
+              }}
+              aria-invalid={!!fieldErrors.email}
+              autoComplete="email"
             />
+            {fieldErrors.email && (
+              <p className="text-xs text-destructive">{fieldErrors.email}</p>
+            )}
           </div>
 
           <div className="space-y-1.5">
-            <label className="mono-label">Password</label>
+            <label className="mono-label" htmlFor="signup-password">Password</label>
             <Input
+              id="signup-password"
               className="h-11"
               type="password"
-              placeholder="Min 6 characters"
+              placeholder="Min 8 characters · letter + number"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (fieldErrors.password) setFieldErrors((f) => ({ ...f, password: undefined }));
+              }}
+              aria-invalid={!!fieldErrors.password}
               autoComplete="new-password"
             />
+            {fieldErrors.password && (
+              <p className="text-xs text-destructive">{fieldErrors.password}</p>
+            )}
           </div>
 
           <Button type="submit" size="lg" className="group mt-2 h-11 w-full rounded-lg" disabled={loading}>

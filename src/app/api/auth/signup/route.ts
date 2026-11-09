@@ -2,51 +2,55 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getDb } from "@/lib/db";
 import { signToken } from "@/lib/auth";
+import { firstError, validateSignupFields } from "@/lib/validation";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    // The identifier can be a plain username or an email.
     const email = body?.email ?? body?.username;
-    const { password, name } = body ?? {};
+    const password = body?.password;
+    const name = body?.name;
+    const confirmPassword = body?.confirmPassword;
 
-    if (typeof email !== "string" || typeof password !== "string" || !email.trim() || !password) {
+    if (typeof email !== "string" || typeof password !== "string") {
       return NextResponse.json(
-        { error: "Username and password are required" },
+        { error: "Email and password are required" },
         { status: 400 }
       );
     }
 
-    if (password.length < 6) {
+    const fieldErrors = validateSignupFields(
+      email,
+      password,
+      typeof name === "string" ? name : "",
+      typeof confirmPassword === "string" ? confirmPassword : undefined
+    );
+    const message = firstError(fieldErrors);
+    if (message) {
       return NextResponse.json(
-        { error: "Password must be at least 6 characters" },
+        { error: message, fields: fieldErrors },
         { status: 400 }
       );
     }
 
     const normalizedEmail = email.toLowerCase().trim();
-    if (/\s/.test(normalizedEmail) || normalizedEmail.length < 3) {
-      return NextResponse.json(
-        { error: "Username must be at least 3 characters with no spaces" },
-        { status: 400 }
-      );
-    }
     const db = await getDb();
 
     const existing = await db.collection("users").findOne({ email: normalizedEmail });
     if (existing) {
       return NextResponse.json(
-        { error: "Username or email already registered" },
+        { error: "Email already registered" },
         { status: 409 }
       );
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
     const now = new Date();
+    const trimmedName = typeof name === "string" ? name.trim() : "";
     const result = await db.collection("users").insertOne({
       email: normalizedEmail,
       password: hashedPassword,
-      name: name?.trim() || null,
+      name: trimmedName || null,
       created_at: now,
       updated_at: now,
     });
@@ -54,7 +58,7 @@ export async function POST(req: NextRequest) {
     const user = {
       id: result.insertedId.toString(),
       email: normalizedEmail,
-      name: name?.trim() || null,
+      name: trimmedName || null,
     };
     const token = signToken(user.id);
     return NextResponse.json({ token, user }, { status: 201 });
