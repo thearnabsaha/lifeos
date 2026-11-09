@@ -23,7 +23,6 @@ if (process.argv[2] === "full") {
   const id = JSON.parse(r.body.result.content[0].text).id;
   await call("complete_reminder", { id });
   await call("delete_reminder", { id });
-  await call("list_diary_entries", { limit: 2 });
   await call("get_daily_summary", { date: today });
 }
 const bad = await fetch(url, { method: "POST", headers: { "content-type": "application/json", accept: "application/json, text/event-stream", authorization: "Bearer nope" }, body: "{}" });

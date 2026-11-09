@@ -27,46 +27,26 @@ export function DatePicker({ selectedDate, onDateChange }: DatePickerProps) {
     onDateChange(format(new Date(), "yyyy-MM-dd"));
   }
 
+  const btn =
+    "flex size-10 items-center justify-center rounded-lg border bg-background text-foreground transition-colors hover:bg-muted active:translate-y-px dark:bg-input/30";
+
   return (
-    <div className="flex items-center justify-between">
-      <button
-        onClick={goBack}
-        className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/5 text-zinc-600 transition-all hover:bg-zinc-900/10 active:scale-90 dark:bg-white/5 dark:text-zinc-300 dark:hover:bg-white/10"
-      >
-        <ChevronLeft className="h-5 w-5" />
+    <div className="flex items-center justify-between gap-3">
+      <button type="button" onClick={goBack} className={btn} aria-label="Previous day">
+        <ChevronLeft className="size-4" strokeWidth={1.5} />
       </button>
 
-      <button
-        onClick={goToToday}
-        className="flex flex-col items-center gap-0.5"
-      >
-        <span
-          className={cn(
-            "text-lg font-bold tracking-tight",
-            today
-              ? "text-accent"
-              : "text-zinc-900 dark:text-white"
-          )}
-        >
+      <button type="button" onClick={goToToday} className="flex min-w-0 flex-col items-center gap-0.5" aria-label="Jump to today">
+        <span className="text-base font-semibold tracking-tight">
           {today ? "Today" : format(date, "EEE, MMM d")}
         </span>
-        {!today && (
-          <span className="text-[10px] font-medium text-accent">
-            Tap for today
-          </span>
-        )}
-        {today && (
-          <span className="text-[10px] text-zinc-400 dark:text-zinc-500">
-            {format(date, "MMMM d, yyyy")}
-          </span>
-        )}
+        <span className={cn("font-mono text-[10px] uppercase tracking-widest text-muted-foreground", !today && "text-foreground underline underline-offset-4")}>
+          {today ? format(date, "MMMM d, yyyy") : "Back to today →"}
+        </span>
       </button>
 
-      <button
-        onClick={goForward}
-        className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900/5 text-zinc-600 transition-all hover:bg-zinc-900/10 active:scale-90 dark:bg-white/5 dark:text-zinc-300 dark:hover:bg-white/10"
-      >
-        <ChevronRight className="h-5 w-5" />
+      <button type="button" onClick={goForward} className={btn} aria-label="Next day">
+        <ChevronRight className="size-4" strokeWidth={1.5} />
       </button>
     </div>
   );

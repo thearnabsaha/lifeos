@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
-import { cn, formatHour, getCurrentHour } from "@/lib/utils";
+import { cn, getCurrentHour } from "@/lib/utils";
 
 interface TimeSlotCardProps {
   hour: number;
@@ -38,7 +38,7 @@ export function TimeSlotCard({
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "auto";
-    const next = Math.max(el.scrollHeight, 36);
+    const next = Math.max(el.scrollHeight, 28);
     // Only write when it actually changes, so the ResizeObserver below
     // cannot ping-pong on its own height updates.
     if (Math.abs(el.offsetHeight - next) > 1) {
@@ -85,7 +85,7 @@ export function TimeSlotCard({
     setValue(text);
     debouncedSave(text);
     e.target.style.height = "auto";
-    e.target.style.height = `${Math.max(e.target.scrollHeight, 36)}px`;
+    e.target.style.height = `${Math.max(e.target.scrollHeight, 28)}px`;
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -97,50 +97,33 @@ export function TimeSlotCard({
     }
   }
 
+  const filled = value.trim().length > 0;
+
   return (
     <div
       id={`time-slot-${hour}`}
       onClick={() => textareaRef.current?.focus()}
       className={cn(
-        "group relative flex items-start gap-3 overflow-hidden rounded-2xl border p-3.5 transition-all duration-300 cursor-text touch-manipulation backdrop-blur-xl",
-        // Base styling
-        "bg-white/75 dark:bg-zinc-900/60",
-        // Focus state: clean native card highlight (no inner box flash)
-        isFocused
-          ? "border-accent/60 ring-4 ring-accent/10 glow scale-[1.01]"
-          : isCurrentHour
-          ? "border-accent/40 !bg-accent/[0.07] glow"
-          : "border-zinc-900/[0.06] dark:border-white/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:border-zinc-900/15 dark:hover:border-white/15",
-        isPast && !content && !isFocused && "opacity-55"
+        "group relative flex cursor-text touch-manipulation items-start gap-4 px-4 py-2.5 transition-colors duration-150",
+        isFocused ? "bg-muted/60" : isCurrentHour ? "bg-muted/40" : "hover:bg-muted/30",
+        isPast && !filled && !isFocused && "opacity-60"
       )}
     >
-      {(isCurrentHour || isFocused || value.trim()) && (
+      {isCurrentHour && <span aria-hidden className="absolute inset-y-0 left-0 w-0.5 bg-foreground" />}
+      {/* Hour column */}
+      <div className="flex w-12 shrink-0 select-none flex-col items-start pt-[6px]">
         <span
           className={cn(
-            "absolute left-0 top-3 bottom-3 w-[3px] rounded-r-full transition-all",
-            isCurrentHour || isFocused ? "accent-gradient" : "bg-accent/30"
-          )}
-        />
-      )}
-      {/* Time column */}
-      <div className="flex flex-col items-center pt-0.5 select-none shrink-0 min-w-[2.25rem]">
-        <span
-          className={cn(
-            "font-mono text-[13px] font-semibold tabular-nums tracking-tight",
-            isCurrentHour
-              ? "text-accent font-bold"
-              : isFocused
-              ? "text-zinc-700 dark:text-zinc-200"
-              : "text-zinc-400 dark:text-zinc-500"
+            "font-mono text-xs tabular-nums tracking-wider",
+            isCurrentHour || isFocused ? "font-semibold text-foreground" : "text-muted-foreground"
           )}
         >
-          {hour.toString().padStart(2, "0")}
-        </span>
-        <span className="text-[9px] font-medium text-zinc-300 dark:text-zinc-600">
-          {formatHour(hour).split(" – ")[1]}
+          {hour.toString().padStart(2, "0")}:00
         </span>
         {isCurrentHour && (
-          <span className="mt-1.5 rounded-full bg-accent px-1.5 py-px text-[8px] font-bold uppercase tracking-wider text-white">Now</span>
+          <span className="mt-1.5 rounded-full bg-primary px-1.5 py-px font-mono text-[9px] font-semibold uppercase tracking-widest text-primary-foreground">
+            Now
+          </span>
         )}
       </div>
 
@@ -168,13 +151,17 @@ export function TimeSlotCard({
           className={cn(
             // 16px font size on mobile is mandatory to prevent iOS Safari auto-zoom
             "w-full resize-none overflow-hidden bg-transparent p-0 text-[16px] sm:text-[15px] leading-relaxed outline-none border-0 ring-0 focus:outline-none focus:ring-0",
-            "text-zinc-900 dark:text-zinc-100",
-            "placeholder:text-zinc-300 dark:placeholder:text-zinc-600",
+            "text-foreground",
+            "placeholder:text-muted-foreground/50",
             "transition-opacity duration-150"
           )}
-          style={{ minHeight: "2.25rem" }}
+          style={{ minHeight: "1.75rem" }}
         />
       </div>
+      <span
+        aria-hidden
+        className={cn("mt-[10px] size-1.5 shrink-0 rounded-full transition-colors", filled ? "bg-success" : "bg-transparent")}
+      />
     </div>
   );
 }

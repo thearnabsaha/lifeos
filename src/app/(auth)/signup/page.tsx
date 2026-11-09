@@ -40,12 +40,13 @@ export default function SignupPage() {
 
   return (
     <AuthShell
+      label="Receipt · New account"
       title="Create your account"
       subtitle="Start organizing your life with LifeOS"
       footer={
         <>
           Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-accent hover:opacity-80">
+          <Link href="/login" className="font-medium text-foreground underline underline-offset-4 hover:opacity-70">
             Sign in
           </Link>
         </>
@@ -53,16 +54,15 @@ export default function SignupPage() {
     >
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="rounded-2xl border border-red-500/20 bg-red-500/10 animate-fade-in px-4 py-3 text-sm text-red-600 dark:text-red-400">
+            <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive lr-rise">
               {error}
             </div>
           )}
 
-          <div className="space-y-2">
-            <label className="ml-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              Name
-            </label>
+          <div className="space-y-1.5">
+            <label className="mono-label">Name</label>
             <Input
+              className="h-11"
               type="text"
               placeholder="Your name"
               value={name}
@@ -71,11 +71,10 @@ export default function SignupPage() {
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="ml-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              Email
-            </label>
+          <div className="space-y-1.5">
+            <label className="mono-label">Email</label>
             <Input
+              className="h-11"
               type="email"
               placeholder="you@example.com"
               value={email}
@@ -85,11 +84,10 @@ export default function SignupPage() {
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="ml-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              Password
-            </label>
+          <div className="space-y-1.5">
+            <label className="mono-label">Password</label>
             <Input
+              className="h-11"
               type="password"
               placeholder="Min 6 characters"
               value={password}
@@ -99,8 +97,8 @@ export default function SignupPage() {
             />
           </div>
 
-          <Button type="submit" className="group mt-2 w-full" disabled={loading}>
-            {loading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Creating account...</>) : (<>Create account<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" /></>)}
+          <Button type="submit" size="lg" className="group mt-2 h-11 w-full rounded-lg" disabled={loading}>
+            {loading ? (<><Loader2 className="size-4 animate-spin" />Creating account...</>) : (<>Create account<ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" /></>)}
           </Button>
         </form>
     </AuthShell>

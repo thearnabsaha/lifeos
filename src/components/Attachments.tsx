@@ -43,10 +43,10 @@ function AudioPlayer({ url, name }: { url: string; name: string }) {
   return (
     <div className="flex items-center gap-2">
       <audio ref={audioRef} src={url} onEnded={() => setPlaying(false)} />
-      <button onClick={toggle} className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-light text-accent">
+      <button onClick={toggle} className="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
         {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 ml-0.5" />}
       </button>
-      <span className="text-xs text-zinc-500 truncate">{name}</span>
+      <span className="truncate text-xs text-muted-foreground">{name}</span>
     </div>
   );
 }
@@ -128,48 +128,48 @@ export function Attachments({ parentType, parentId, compact }: AttachmentsProps)
         <button
           onClick={() => { if (fileRef.current) { fileRef.current.accept = "image/*"; fileRef.current.click(); } }}
           disabled={isLocal || uploading}
-          className="flex h-8 items-center gap-1 rounded-lg border border-zinc-200 px-2 text-xs text-zinc-500 hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
+          className="inline-flex h-8 items-center gap-1 rounded-full border bg-background px-3 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40 dark:bg-input/30"
         >
           <Image className="h-3.5 w-3.5" /> Photo
         </button>
         <button
           onClick={() => { if (fileRef.current) { fileRef.current.accept = "audio/*"; fileRef.current.click(); } }}
           disabled={isLocal || uploading}
-          className="flex h-8 items-center gap-1 rounded-lg border border-zinc-200 px-2 text-xs text-zinc-500 hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
+          className="inline-flex h-8 items-center gap-1 rounded-full border bg-background px-3 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40 dark:bg-input/30"
         >
           <Mic className="h-3.5 w-3.5" /> Audio
         </button>
         <button
           onClick={() => { if (fileRef.current) { fileRef.current.accept = ".pdf"; fileRef.current.click(); } }}
           disabled={isLocal || uploading}
-          className="flex h-8 items-center gap-1 rounded-lg border border-zinc-200 px-2 text-xs text-zinc-500 hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
+          className="inline-flex h-8 items-center gap-1 rounded-full border bg-background px-3 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40 dark:bg-input/30"
         >
           <FileText className="h-3.5 w-3.5" /> PDF
         </button>
         <button
           onClick={() => { if (fileRef.current) { fileRef.current.accept = "*"; fileRef.current.click(); } }}
           disabled={isLocal || uploading}
-          className="flex h-8 items-center gap-1 rounded-lg border border-zinc-200 px-2 text-xs text-zinc-500 hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-800"
+          className="inline-flex h-8 items-center gap-1 rounded-full border bg-background px-3 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40 dark:bg-input/30"
         >
           <Plus className="h-3.5 w-3.5" /> File
         </button>
       </div>
 
       {uploading && (
-        <div className="flex items-center gap-2 text-xs text-accent">
-          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-zinc-200 border-t-accent" />
-          Uploading...
+        <div className="mono-label flex items-center gap-2">
+          <div className="size-3.5 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+          Uploading…
         </div>
       )}
 
       {isLocal && attachments.length === 0 && (
-        <p className="text-[10px] text-zinc-400">Save this item to the cloud first to add attachments</p>
+        <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Save this item to the cloud first to add attachments</p>
       )}
 
       {images.length > 0 && (
         <div className="grid grid-cols-3 gap-2">
           {images.map((a) => (
-            <div key={a.id} className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700">
+            <div key={a.id} className="group relative aspect-square overflow-hidden rounded-lg border">
               <img src={a.file_url} alt={a.file_name} className="h-full w-full object-cover" />
               <button
                 onClick={() => handleDelete(a.id)}
@@ -183,11 +183,11 @@ export function Attachments({ parentType, parentId, compact }: AttachmentsProps)
       )}
 
       {audios.map((a) => (
-        <div key={a.id} className="flex items-center justify-between rounded-xl border border-zinc-200 p-2 dark:border-zinc-700">
+        <div key={a.id} className="flex items-center justify-between rounded-lg border p-2">
           <AudioPlayer url={a.file_url} name={a.file_name} />
           <div className="flex items-center gap-1">
-            <span className="text-[10px] text-zinc-400">{formatSize(a.file_size)}</span>
-            <button onClick={() => handleDelete(a.id)} className="text-zinc-400 hover:text-red-500">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{formatSize(a.file_size)}</span>
+            <button onClick={() => handleDelete(a.id)} className="text-muted-foreground hover:text-destructive">
               <X className="h-3.5 w-3.5" />
             </button>
           </div>
@@ -195,20 +195,20 @@ export function Attachments({ parentType, parentId, compact }: AttachmentsProps)
       ))}
 
       {[...pdfs, ...others].map((a) => (
-        <div key={a.id} className="flex items-center gap-2 rounded-xl border border-zinc-200 p-2 dark:border-zinc-700">
+        <div key={a.id} className="flex items-center gap-2 rounded-lg border p-2">
           {a.file_type === "pdf" ? (
-            <FileText className="h-5 w-5 shrink-0 text-red-500" />
+            <FileText className="h-5 w-5 shrink-0 text-muted-foreground" />
           ) : (
-            <File className="h-5 w-5 shrink-0 text-zinc-400" />
+            <File className="h-5 w-5 shrink-0 text-muted-foreground" />
           )}
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-zinc-700 dark:text-zinc-300 truncate">{a.file_name}</p>
-            <p className="text-[10px] text-zinc-400">{formatSize(a.file_size)}</p>
+            <p className="truncate text-xs font-medium">{a.file_name}</p>
+            <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{formatSize(a.file_size)}</p>
           </div>
-          <a href={a.file_url} target="_blank" rel="noopener" className="text-accent hover:opacity-80">
+          <a href={a.file_url} target="_blank" rel="noopener" className="text-foreground hover:opacity-70">
             <Download className="h-4 w-4" />
           </a>
-          <button onClick={() => handleDelete(a.id)} className="text-zinc-400 hover:text-red-500">
+          <button onClick={() => handleDelete(a.id)} className="text-muted-foreground hover:text-destructive">
             <X className="h-3.5 w-3.5" />
           </button>
         </div>

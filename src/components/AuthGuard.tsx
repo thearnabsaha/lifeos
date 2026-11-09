@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
-import { Spinner } from "@/components/ui/spinner";
+import { LogoMark } from "@/components/Logo";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading, checkAuth } = useAuthStore();
@@ -21,11 +21,9 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="app-bg flex h-screen flex-col items-center justify-center gap-4">
-        <div className="accent-gradient glow flex h-14 w-14 items-center justify-center rounded-[20px] animate-pulse">
-          <Spinner className="h-6 w-6 border-white/30 border-t-white" />
-        </div>
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-zinc-400">LifeOS</p>
+      <div className="flex h-screen flex-col items-center justify-center gap-3 bg-background">
+        <LogoMark className="size-10 animate-pulse" />
+        <p className="mono-label">Printing your day…</p>
       </div>
     );
   }

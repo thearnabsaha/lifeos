@@ -105,11 +105,6 @@ export async function ensureIndexes() {
     .collection("time_entries")
     .createIndex({ user_id: 1, date: 1 });
 
-  // journal_entries
-  await db
-    .collection("journal_entries")
-    .createIndex({ user_id: 1, date: 1 }, { unique: true });
-
   // todos
   await db
     .collection("todos")

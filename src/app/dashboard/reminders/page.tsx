@@ -5,15 +5,16 @@ import { useRemindersStore, Reminder } from "@/store/remindersStore";
 import { Attachments } from "@/components/Attachments";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader, ReceiptCard, SectionLabel, EmptyState, Chip, Tag, Tear } from "@/components/receipt";
 import { cn } from "@/lib/utils";
-import { Plus, Trash2, Check, Bell, ChevronUp, Paperclip } from "lucide-react";
+import { Plus, Trash2, Check, X, Paperclip } from "lucide-react";
 import { format, isPast, isToday } from "date-fns";
 
-const PRIORITIES: { value: Reminder["priority"]; color: string; label: string }[] = [
-  { value: "low", color: "bg-green-500", label: "Low" },
-  { value: "medium", color: "bg-amber-500", label: "Med" },
-  { value: "high", color: "bg-red-500", label: "High" },
+const PRIORITIES: { value: Reminder["priority"]; dot: string; label: string }[] = [
+  { value: "low", dot: "bg-success", label: "Low" },
+  { value: "medium", dot: "bg-amber-500", label: "Med" },
+  { value: "high", dot: "bg-destructive", label: "High" },
 ];
 
 export default function RemindersPage() {
@@ -23,6 +24,7 @@ export default function RemindersPage() {
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState<Reminder["priority"]>("medium");
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchReminders(); }, []);
 
   function handleAdd() {
@@ -34,79 +36,101 @@ export default function RemindersPage() {
     setShowAdd(false);
   }
 
-  const upcoming = reminders.filter((r) => !r.completed);
+  const upcoming = reminders
+    .filter((r) => !r.completed)
+    .sort((a, b) => (a.due_date ?? "9999").localeCompare(b.due_date ?? "9999"));
   const completed = reminders.filter((r) => r.completed);
+  const overdue = upcoming.filter((r) => r.due_date && isPast(new Date(r.due_date.slice(0, 10) + "T23:59:59"))).length;
 
   return (
-    <div className="mx-auto max-w-lg px-4 pt-4">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-[28px] font-bold tracking-tight text-gradient animate-fade-in">Reminders</h1>
-        <Button size="sm" onClick={() => setShowAdd(!showAdd)}>
-          {showAdd ? <ChevronUp className="mr-1 h-4 w-4" /> : <Plus className="mr-1 h-4 w-4" />}
-          {showAdd ? "Close" : "Add"}
-        </Button>
-      </div>
+    <div className="mx-auto w-full max-w-[680px] px-4 pt-6">
+      <PageHeader
+        label={`${String(upcoming.length).padStart(2, "0")} open · ${String(completed.length).padStart(2, "0")} done${overdue ? ` · ${overdue} overdue` : ""}`}
+        title="Reminders"
+        subtitle="Small things, written down once."
+        action={
+          <Button size="lg" className="h-10 rounded-lg px-4" onClick={() => setShowAdd(!showAdd)}>
+            {showAdd ? <X className="size-4" /> : <Plus className="size-4" />}
+            {showAdd ? "Close" : "New"}
+          </Button>
+        }
+      />
 
       {showAdd && (
-        <Card className="p-4 mb-4 animate-slide-up">
-          <div className="space-y-3">
-            <Input placeholder="What do you need to remember?" value={title} onChange={(e) => setTitle(e.target.value)} autoFocus onKeyDown={(e) => e.key === "Enter" && handleAdd()} />
-            <div className="flex gap-2">
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="flex-1 h-11 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 text-sm text-zinc-700 dark:text-zinc-300 outline-none"
-              />
-              <div className="flex items-center gap-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 px-3">
-                {PRIORITIES.map((p) => (
-                  <button
-                    key={p.value}
-                    onClick={() => setPriority(p.value)}
-                    title={p.label}
-                    className={cn("h-5 w-5 rounded-full transition-all", p.color, priority === p.value ? "ring-2 ring-offset-2 ring-zinc-400 dark:ring-offset-zinc-900" : "opacity-40")}
-                  />
-                ))}
-              </div>
+        <ReceiptCard className="mb-6" print>
+          <p className="mono-label">New reminder</p>
+          <Input
+            className="mt-3 h-11"
+            placeholder="What do you need to remember?"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            autoFocus
+            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+          />
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <input
+              type="date"
+              aria-label="Due date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              className="h-9 flex-1 rounded-lg border bg-background px-3 font-mono text-sm text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+            />
+            <div className="flex gap-1.5" role="radiogroup" aria-label="Priority">
+              {PRIORITIES.map((p) => (
+                <Chip key={p.value} active={priority === p.value} onClick={() => setPriority(p.value)} role="radio" aria-checked={priority === p.value}>
+                  <span className={cn("size-1.5 rounded-full", p.dot)} />
+                  {p.label}
+                </Chip>
+              ))}
             </div>
-            <Button className="w-full" onClick={handleAdd} disabled={!title.trim()}>Add Reminder</Button>
           </div>
-        </Card>
+          <Tear />
+          <Button className="h-10 w-full rounded-lg" onClick={handleAdd} disabled={!title.trim()}>
+            Add reminder →
+          </Button>
+        </ReceiptCard>
       )}
 
       {isLoading && reminders.length === 0 ? (
-        <div className="flex justify-center py-12">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-300 border-t-accent" />
+        <div className="overflow-hidden rounded-xl border bg-card">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3 border-b px-4 py-3.5 last:border-b-0">
+              <Skeleton className="size-5 rounded-full" />
+              <Skeleton className="h-4 flex-1" />
+              <Skeleton className="h-4 w-12 rounded-full" />
+            </div>
+          ))}
         </div>
       ) : reminders.length === 0 ? (
-        <div className="flex flex-col items-center pt-20 animate-fade-in">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-green-50 dark:bg-green-950/30">
-            <Bell className="h-8 w-8 text-green-500" />
-          </div>
-          <h2 className="mt-4 text-lg font-semibold text-zinc-900 dark:text-white">All clear!</h2>
-          <p className="mt-1 text-sm text-zinc-500">Tap &quot;Add&quot; to create a reminder</p>
-        </div>
+        <EmptyState label="0 open · 0 done" line="All clear. Nothing to remember right now.">
+          <Button variant="outline" className="h-9 rounded-lg px-4" onClick={() => setShowAdd(true)}>
+            <Plus className="size-4" /> New reminder
+          </Button>
+        </EmptyState>
       ) : (
-        <div className="space-y-4 stagger">
+        <div className="space-y-6 pb-6">
           {upcoming.length > 0 && (
-            <div>
-              <p className="mb-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider px-1">Upcoming ({upcoming.length})</p>
-              <div className="space-y-2">
+            <section className="lr-rise">
+              <SectionLabel count={upcoming.length}>Upcoming</SectionLabel>
+              <div className="overflow-hidden rounded-xl border bg-card shadow-[0_1px_3px_#0000000d]">
                 {upcoming.map((r) => (
-                  <ReminderCard key={r.id} reminder={r} onToggle={() => toggleComplete(r.id)} onDelete={() => deleteReminder(r.id)} />
+                  <ReminderRow key={r.id} reminder={r} onToggle={() => toggleComplete(r.id)} onDelete={() => deleteReminder(r.id)} />
                 ))}
               </div>
-            </div>
+            </section>
+          )}
+          {upcoming.length === 0 && (
+            <EmptyState label={`0 open · ${completed.length} done`} line="Everything's done. Nice." />
           )}
           {completed.length > 0 && (
-            <div>
-              <p className="mb-2 text-xs font-semibold text-zinc-400 uppercase tracking-wider px-1">Completed ({completed.length})</p>
-              <div className="space-y-2">
+            <section className="lr-rise">
+              <SectionLabel count={completed.length}>Completed</SectionLabel>
+              <div className="overflow-hidden rounded-xl border border-dashed">
                 {completed.map((r) => (
-                  <ReminderCard key={r.id} reminder={r} onToggle={() => toggleComplete(r.id)} onDelete={() => deleteReminder(r.id)} />
+                  <ReminderRow key={r.id} reminder={r} onToggle={() => toggleComplete(r.id)} onDelete={() => deleteReminder(r.id)} />
                 ))}
               </div>
-            </div>
+            </section>
           )}
         </div>
       )}
@@ -114,67 +138,80 @@ export default function RemindersPage() {
   );
 }
 
-function ReminderCard({ reminder, onToggle, onDelete }: { reminder: Reminder; onToggle: () => void; onDelete: () => void }) {
+function ReminderRow({ reminder, onToggle, onDelete }: { reminder: Reminder; onToggle: () => void; onDelete: () => void }) {
   const [showAttachments, setShowAttachments] = useState(false);
-  const priorityColor = PRIORITIES.find((p) => p.value === reminder.priority)?.color || "bg-amber-500";
-  const isOverdue = reminder.due_date && !reminder.completed && isPast(new Date(reminder.due_date + "T23:59:59"));
-  const isDueToday = reminder.due_date && isToday(new Date(reminder.due_date + "T00:00:00"));
+  const p = PRIORITIES.find((x) => x.value === reminder.priority) ?? PRIORITIES[1];
+  const due = reminder.due_date ? reminder.due_date.slice(0, 10) : null;
+  const isOverdue = due && !reminder.completed && isPast(new Date(due + "T23:59:59"));
+  const isDueToday = due && isToday(new Date(due + "T00:00:00"));
 
   return (
-    <div className={cn(
-      "rounded-2xl border transition-all animate-fade-in",
-      reminder.completed
-        ? "border-zinc-100 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/50 opacity-60"
-        : "border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900"
-    )}>
-      <div className="flex items-center gap-3 p-3">
+    <div className="border-b last:border-b-0">
+      <div className={cn("flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-muted/40", reminder.completed && "opacity-60")}>
         <button
+          type="button"
           onClick={onToggle}
-          className={cn(
-            "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all",
-            reminder.completed
-              ? "border-accent bg-accent text-white"
-              : "border-zinc-300 dark:border-zinc-600 hover:border-accent"
-          )}
+          aria-label={reminder.completed ? "Mark as not done" : "Mark as done"}
+          className="flex size-9 shrink-0 items-center justify-center"
         >
-          {reminder.completed && <Check className="h-3.5 w-3.5" />}
+          <span
+            className={cn(
+              "flex size-5 items-center justify-center rounded-full border transition-colors",
+              reminder.completed ? "border-success bg-success text-white" : "border-foreground/30 hover:border-foreground"
+            )}
+          >
+            {reminder.completed && <Check className="size-3" strokeWidth={3} />}
+          </span>
         </button>
 
-        <div className="flex-1 min-w-0">
-          <p className={cn("text-sm font-medium", reminder.completed && "line-through text-zinc-400 dark:text-zinc-500")}>
+        <div className="min-w-0 flex-1">
+          <p className={cn("truncate text-sm font-medium", reminder.completed && "text-muted-foreground line-through")}>
             {reminder.title}
           </p>
-          {reminder.due_date && (
-            <p className={cn("mt-0.5 text-[10px] font-medium",
-              isOverdue ? "text-red-500" : isDueToday ? "text-accent" : "text-zinc-400"
-            )}>
-              {isOverdue ? "Overdue \u2014 " : isDueToday ? "Today \u2014 " : ""}
-              {format(new Date(reminder.due_date + "T00:00:00"), "MMM d, yyyy")}
-            </p>
-          )}
+          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+            <Tag>
+              <span className={cn("size-1.5 rounded-full", p.dot)} />
+              {p.label}
+            </Tag>
+            {due && (
+              <Tag
+                className={cn(
+                  isOverdue && "border-destructive/40 text-destructive",
+                  isDueToday && !reminder.completed && "border-primary bg-primary text-primary-foreground"
+                )}
+              >
+                {isOverdue ? "Overdue · " : isDueToday ? "Today · " : ""}
+                {format(new Date(due + "T00:00:00"), "MMM d")}
+              </Tag>
+            )}
+          </div>
         </div>
 
-        <div className={cn("h-2.5 w-2.5 rounded-full shrink-0", priorityColor)} />
-
         <button
+          type="button"
           onClick={() => setShowAttachments(!showAttachments)}
-          className={cn("flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
-            showAttachments ? "text-accent bg-accent-light" : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          aria-label="Attachments"
+          aria-expanded={showAttachments}
+          className={cn(
+            "flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+            showAttachments && "bg-muted text-foreground"
           )}
         >
-          <Paperclip className="h-3.5 w-3.5" />
+          <Paperclip className="size-4" strokeWidth={1.5} />
         </button>
-
-        <button onClick={onDelete} className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
-          <Trash2 className="h-3.5 w-3.5" />
+        <button
+          type="button"
+          onClick={onDelete}
+          aria-label="Delete reminder"
+          className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+        >
+          <Trash2 className="size-4" strokeWidth={1.5} />
         </button>
       </div>
 
       {showAttachments && (
-        <div className="px-3 pb-3 pt-0 border-t border-zinc-100 dark:border-zinc-800 mt-0">
-          <div className="pt-3">
-            <Attachments parentType="reminder" parentId={reminder.id} compact />
-          </div>
+        <div className="tear mx-3 pb-3 pt-3">
+          <Attachments parentType="reminder" parentId={reminder.id} compact />
         </div>
       )}
     </div>

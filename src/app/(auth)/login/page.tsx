@@ -34,12 +34,13 @@ export default function LoginPage() {
 
   return (
     <AuthShell
+      label="Receipt · Sign in"
       title="Welcome back"
       subtitle="Sign in to your LifeOS account"
       footer={
         <>
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="font-semibold text-accent hover:opacity-80">
+          <Link href="/signup" className="font-medium text-foreground underline underline-offset-4 hover:opacity-70">
             Sign up
           </Link>
         </>
@@ -47,16 +48,15 @@ export default function LoginPage() {
     >
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="rounded-2xl border border-red-500/20 bg-red-500/10 animate-fade-in px-4 py-3 text-sm text-red-600 dark:text-red-400">
+            <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive lr-rise">
               {error}
             </div>
           )}
 
-          <div className="space-y-2">
-            <label className="ml-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              Email
-            </label>
+          <div className="space-y-1.5">
+            <label className="mono-label">Email</label>
             <Input
+              className="h-11"
               type="email"
               placeholder="you@example.com"
               value={email}
@@ -66,11 +66,10 @@ export default function LoginPage() {
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="ml-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              Password
-            </label>
+          <div className="space-y-1.5">
+            <label className="mono-label">Password</label>
             <Input
+              className="h-11"
               type="password"
               placeholder="••••••••"
               value={password}
@@ -80,8 +79,8 @@ export default function LoginPage() {
             />
           </div>
 
-          <Button type="submit" className="group mt-2 w-full" disabled={loading}>
-            {loading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Signing in...</>) : (<>Sign in<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" /></>)}
+          <Button type="submit" size="lg" className="group mt-2 h-11 w-full rounded-lg" disabled={loading}>
+            {loading ? (<><Loader2 className="size-4 animate-spin" />Signing in...</>) : (<>Sign in<ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" /></>)}
           </Button>
         </form>
     </AuthShell>

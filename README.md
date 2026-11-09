@@ -91,9 +91,8 @@ Endpoint: `https://<your-domain>/api/mcp` (Streamable HTTP), auth with `Authoriz
 
 Tools:
 - Time Arena: `get_day` (date?, onlyFilled?), `set_slots` (date?, slots[{hour, content}])
-- Diary: `list_diary_entries`, `search_diary`, `get_diary_entry`, `create_diary_entry` (writes your text, or generates with the free built-in summarizer), `update_diary_entry`
 - Reminders: `list_reminders`, `create_reminder`, `update_reminder`, `complete_reminder`, `delete_reminder`
-- Summary: `get_daily_summary` (slots + diary + due/overdue reminders)
+- Summary: `get_daily_summary` (slots + due/overdue reminders)
 
 Dates are `YYYY-MM-DD` (default: today in `LIFEOS_TZ`, optional env, default `Asia/Kolkata`). No other new env vars beyond the app's existing `MONGODB_URI` (and `JWT_SECRET` for the app login). Runs fine on Vercel Hobby.
 

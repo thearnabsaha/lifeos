@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Bot, Check, Copy, KeyRound, Plus, Trash2 } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 type Key = { id: string; name: string; prefix: string; createdAt: string; lastUsedAt?: string | null };
@@ -23,10 +22,10 @@ function CopyBtn({ text }: { text: string }) {
     <button
       type="button"
       onClick={() => { navigator.clipboard?.writeText(text); setDone(true); setTimeout(() => setDone(false), 1500); }}
-      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-900/5 text-zinc-600 transition-all active:scale-90 hover:bg-accent/15 hover:text-accent dark:bg-white/10 dark:text-zinc-300"
+      className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:translate-y-px"
       aria-label="Copy"
     >
-      {done ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+      {done ? <Check className="size-4 text-success" /> : <Copy className="size-4" strokeWidth={1.5} />}
     </button>
   );
 }
@@ -64,62 +63,68 @@ export function McpSection() {
   }
 
   return (
-    <Card className="relative overflow-hidden p-4">
-      <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-accent/20 blur-3xl" />
-      <div className="relative mb-2 flex items-center gap-2">
-        <div className="accent-gradient flex h-8 w-8 items-center justify-center rounded-xl">
-          <Bot className="h-4 w-4 text-white" />
+    <div className="rounded-xl border bg-card p-4 shadow-[0_1px_3px_#0000000d]">
+      <div className="flex items-start gap-3">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+          <Bot className="size-4" strokeWidth={1.5} />
         </div>
-        <div>
-          <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">MCP / AI assistant</h3>
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-400">Connect Grok Bot, Cursor or Claude to your LifeOS</p>
+        <div className="min-w-0">
+          <p className="text-sm font-medium">Connect an AI assistant</p>
+          <p className="text-xs text-muted-foreground">Grok Bot, Cursor or Claude can read and update your Time Arena and reminders.</p>
         </div>
       </div>
 
-      <p className="mb-1 mt-3 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Server URL</p>
-      <div className="flex items-center gap-2 rounded-2xl border border-zinc-900/10 bg-white/60 py-1.5 pl-3 pr-1.5 dark:border-white/10 dark:bg-white/5">
+      <p className="mono-label mb-1.5 mt-4">Server URL</p>
+      <div className="flex items-center gap-2 rounded-lg border bg-background py-1 pl-3 pr-1 dark:bg-input/30">
         <code className="flex-1 truncate font-mono text-xs select-text">{url}</code>
         <CopyBtn text={url} />
       </div>
+      <p className="mt-1.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Auth · Authorization: Bearer los_…</p>
 
       {newKey && (
-        <div className="mt-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3 animate-fade-in">
-          <p className="mb-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400">New key — copy it now, it won&apos;t be shown again</p>
+        <div className="mt-4 rounded-lg border border-success/40 bg-success/5 p-3 lr-rise">
+          <p className="mono-label mb-1 text-success">New key · copy it now · shown once</p>
           <div className="flex items-center gap-2">
             <code className="flex-1 break-all font-mono text-xs select-text">{newKey}</code>
             <CopyBtn text={newKey} />
           </div>
-          <p className="mt-2 text-[11px] text-zinc-500 dark:text-zinc-400">
-            Header: <code className="font-mono">Authorization: Bearer {newKey.slice(0, 10)}…</code>
-          </p>
         </div>
       )}
 
-      {error && <p className="mt-3 rounded-xl bg-red-500/10 p-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="mt-3 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">{error}</p>}
 
-      {keys.length > 0 && (
-        <ul className="mt-3 space-y-1.5">
+      <div className="tear my-4" />
+      <p className="mono-label mb-1">API keys · {String(keys.length).padStart(2, "0")}</p>
+      {keys.length > 0 ? (
+        <ul className="divide-y">
           {keys.map((k) => (
-            <li key={k.id} className="flex items-center gap-2 rounded-2xl bg-zinc-900/[0.03] px-3 py-2 dark:bg-white/[0.04]">
-              <KeyRound className="h-4 w-4 shrink-0 text-accent" />
+            <li key={k.id} className="flex items-center gap-3 py-2">
+              <KeyRound className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.5} />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-medium text-zinc-900 dark:text-white">{k.name}</p>
-                <p className="font-mono text-[10px] text-zinc-500">
+                <p className="truncate text-sm font-medium">{k.name}</p>
+                <p className="font-mono text-[11px] text-muted-foreground">
                   {k.prefix}… · {k.lastUsedAt ? `used ${new Date(k.lastUsedAt).toLocaleDateString()}` : "never used"}
                 </p>
               </div>
-              <button onClick={() => revoke(k.id)} className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-all hover:bg-red-500/10 hover:text-red-500 active:scale-90" aria-label="Revoke key">
-                <Trash2 className="h-4 w-4" />
+              <button
+                type="button"
+                onClick={() => revoke(k.id)}
+                className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                aria-label="Revoke key"
+              >
+                <Trash2 className="size-4" strokeWidth={1.5} />
               </button>
             </li>
           ))}
         </ul>
+      ) : (
+        <p className="py-2 text-sm text-muted-foreground">No keys yet.</p>
       )}
 
-      <Button onClick={create} disabled={busy} className="mt-3 w-full gap-2">
-        <Plus className="h-4 w-4" />
+      <Button onClick={create} disabled={busy} className="mt-3 h-10 w-full rounded-lg">
+        <Plus className="size-4" />
         {busy ? "Creating…" : "Create API key"}
       </Button>
-    </Card>
+    </div>
   );
 }

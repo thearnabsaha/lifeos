@@ -3,7 +3,6 @@ import { z } from "zod";
 import { ObjectId, type Filter, type Document } from "mongodb";
 import { getDb, formatDoc } from "@/lib/db";
 import { verifyApiKey } from "@/lib/mcpKeys";
-import { generateAiDiary } from "@/lib/aiSummarizer";
 
 export const maxDuration = 60;
 
@@ -18,7 +17,6 @@ const err = (msg: string) => ({ content: [{ type: "text" as const, text: msg }],
 const dateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).describe("Date as YYYY-MM-DD");
 // "Today" in the user's timezone (LIFEOS_TZ, default Asia/Kolkata) so it matches the app's local dates.
 const today = () => new Intl.DateTimeFormat("en-CA", { timeZone: process.env.LIFEOS_TZ || "Asia/Kolkata" }).format(new Date());
-const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const byId = (userId: string, id: string): Filter<Document> =>
   ObjectId.isValid(id) ? { _id: new ObjectId(id), user_id: userId } : { _id: id as unknown as ObjectId, user_id: userId };
 
@@ -60,69 +58,6 @@ const handler = createMcpHandler(
         );
       }
       return ok({ date, updated: a.slots.length, slots: (await daySlots(userId, date)).filter((s) => s.content.trim()) });
-    });
-
-    // ---------- Diary ----------
-    const diaryOut = (d: Document | null) => d && { id: d._id?.toString(), date: d.date, title: d.title, mood: d.mood, summary: d.summary, highlights: d.highlights, stats: d.stats, updatedAt: d.updated_at };
-
-    server.registerTool("list_diary_entries", {
-      title: "List diary entries", description: "List recent AI Diary entries, newest first, optionally within a date range.",
-      inputSchema: z.object({ from: dateStr.optional(), to: dateStr.optional(), limit: z.number().int().min(1).max(100).optional() }),
-    }, async (a, ctx) => {
-      const db = await getDb(); const q: Document = { user_id: uid(ctx) };
-      if (a.from || a.to) q.date = { ...(a.from ? { $gte: a.from } : {}), ...(a.to ? { $lte: a.to } : {}) };
-      const rows = await db.collection("journal_entries").find(q).sort({ date: -1 }).limit(a.limit ?? 20).toArray();
-      return ok(rows.map((r) => ({ date: r.date, title: r.title, mood: r.mood, summary: String(r.summary ?? "").slice(0, 280) })));
-    });
-
-    server.registerTool("search_diary", {
-      title: "Search diary", description: "Case-insensitive text search across diary titles, summaries and highlights.",
-      inputSchema: z.object({ query: z.string().min(1), limit: z.number().int().min(1).max(50).optional() }),
-    }, async (a, ctx) => {
-      const db = await getDb(); const re = { $regex: esc(a.query), $options: "i" };
-      const rows = await db.collection("journal_entries").find({ user_id: uid(ctx), $or: [{ title: re }, { summary: re }, { highlights: re }] }).sort({ date: -1 }).limit(a.limit ?? 10).toArray();
-      return ok(rows.map(diaryOut));
-    });
-
-    server.registerTool("get_diary_entry", {
-      title: "Get diary entry", description: "Get the full diary entry for a date (default today).",
-      inputSchema: z.object({ date: dateStr.optional() }),
-    }, async (a, ctx) => {
-      const db = await getDb();
-      const d = await db.collection("journal_entries").findOne({ user_id: uid(ctx), date: a.date ?? today() });
-      return d ? ok(diaryOut(d)) : err("No diary entry for that date. Use create_diary_entry to write or generate one.");
-    });
-
-    server.registerTool("create_diary_entry", {
-      title: "Create diary entry",
-      description: "Create a diary entry for a date. If `summary` is given it is saved as written; otherwise the free built-in summarizer generates one from that day's Time Arena slots (same as the app's AI Diary button). Fails if an entry exists unless overwrite=true.",
-      inputSchema: z.object({ date: dateStr.optional(), summary: z.string().optional(), title: z.string().optional(), mood: z.string().optional(), overwrite: z.boolean().optional() }),
-    }, async (a, ctx) => {
-      const userId = uid(ctx); const date = a.date ?? today();
-      const db = await getDb(); const now = new Date();
-      const existing = await db.collection("journal_entries").findOne({ user_id: userId, date });
-      if (existing && !a.overwrite) return err("An entry already exists for this date. Use update_diary_entry or overwrite=true.");
-      const gen = a.summary ? null : await generateAiDiary(date, await daySlots(userId, date));
-      const set = gen
-        ? { title: a.title ?? gen.title, mood: a.mood ?? gen.mood, summary: gen.summary, highlights: gen.highlights, stats: gen.stats, updated_at: now }
-        : { title: a.title ?? "Diary", mood: a.mood ?? "neutral", summary: a.summary, updated_at: now };
-      const r = await db.collection("journal_entries").findOneAndUpdate(
-        { user_id: userId, date },
-        { $set: set, $setOnInsert: { user_id: userId, date, created_at: now } },
-        { upsert: true, returnDocument: "after" }
-      );
-      return ok(diaryOut(r));
-    });
-
-    server.registerTool("update_diary_entry", {
-      title: "Update diary entry", description: "Edit the diary entry for a date. Only provided fields change.",
-      inputSchema: z.object({ date: dateStr, summary: z.string().optional(), title: z.string().optional(), mood: z.string().optional() }),
-    }, async (a, ctx) => {
-      const db = await getDb();
-      const set: Document = { updated_at: new Date() };
-      for (const k of ["summary", "title", "mood"] as const) if (a[k] !== undefined) set[k] = a[k];
-      const r = await db.collection("journal_entries").findOneAndUpdate({ user_id: uid(ctx), date: a.date }, { $set: set }, { returnDocument: "after" });
-      return r ? ok(diaryOut(r)) : err("No diary entry for that date.");
     });
 
     // ---------- Reminders ----------
@@ -179,17 +114,15 @@ const handler = createMcpHandler(
     // ---------- Summary ----------
     server.registerTool("get_daily_summary", {
       title: "Daily summary",
-      description: "One-shot overview of a day: logged Time Arena slots, the diary entry (if any), open reminders and those due that day.",
+      description: "One-shot overview of a day: logged Time Arena slots, open reminders and those due that day.",
       inputSchema: z.object({ date: dateStr.optional() }),
     }, async (a, ctx) => {
       const userId = uid(ctx); const date = a.date ?? today(); const db = await getDb();
       const slots = (await daySlots(userId, date)).filter((s) => s.content.trim());
-      const diary = await db.collection("journal_entries").findOne({ user_id: userId, date });
       const open = await db.collection("reminders").find({ user_id: userId, completed: { $ne: true } }).sort({ due_date: 1 }).toArray();
       return ok({
         date,
         timeArena: { hoursLogged: slots.length, slots },
-        diary: diaryOut(diary),
         reminders: {
           open: open.length,
           dueThisDay: open.filter((r) => typeof r.due_date === "string" && r.due_date.startsWith(date)).map((r) => formatDoc(r)),

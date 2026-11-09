@@ -1,45 +1,52 @@
 "use client";
 
-import { Clock } from "lucide-react";
+import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { ReceiptCard, Barcode } from "@/components/receipt";
 
 export function AuthShell({
+  label,
   title,
   subtitle,
   children,
   footer,
 }: {
+  label?: string;
   title: string;
   subtitle: string;
   children: React.ReactNode;
   footer: React.ReactNode;
 }) {
   return (
-    <div className="app-bg fixed inset-0 overflow-y-auto">
-      <div className="orb -left-24 top-10 h-72 w-72 bg-accent" />
-      <div className="orb -right-24 bottom-10 h-80 w-80 bg-fuchsia-500/60" style={{ animationDelay: "-6s" }} />
+    <div className="fixed inset-0 overflow-y-auto bg-background">
       <div
-        className="relative flex min-h-full flex-col items-center justify-center px-6"
+        className="flex min-h-full flex-col px-5"
         style={{
-          paddingTop: "max(env(safe-area-inset-top, 0px), 24px)",
+          paddingTop: "max(env(safe-area-inset-top, 0px), 12px)",
           paddingBottom: "max(env(safe-area-inset-bottom, 0px), 24px)",
         }}
       >
-        <div className="w-full max-w-sm stagger">
-          <div className="mb-8 flex flex-col items-center gap-2 text-center">
-            <div className="relative">
-              <div className="absolute inset-0 rounded-[22px] bg-accent blur-xl opacity-50" />
-              <div className="accent-gradient relative flex h-16 w-16 items-center justify-center rounded-[22px] ring-1 ring-white/30">
-                <Clock className="h-8 w-8 text-white" strokeWidth={2.25} />
-              </div>
-            </div>
-            <span className="mt-4 text-[11px] font-semibold uppercase tracking-[0.25em] text-accent">
-              LifeOS
-            </span>
-            <h1 className="text-3xl font-bold tracking-tight text-gradient">{title}</h1>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">{subtitle}</p>
+        <header className="mx-auto flex h-[58px] w-full max-w-sm items-center justify-between">
+          <Logo />
+          <ThemeToggle />
+        </header>
+        <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-8">
+          <div className="mb-6 lr-rise">
+            <p className="mono-label mb-1">{label ?? `LifeOS · ${new Date().getFullYear()}`}</p>
+            <h1 className="text-3xl font-semibold tracking-tight text-balance">{title}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
           </div>
-          <div className="glass rounded-[28px] p-6">{children}</div>
-          <div className="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400">{footer}</div>
+          <ReceiptCard print className="px-5 py-7">
+            {children}
+            <div className="tear my-5" />
+            <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              <span>No ads</span>
+              <span>Offline-first</span>
+              <span>Free forever</span>
+            </div>
+            <Barcode className="mt-4 h-6" />
+          </ReceiptCard>
+          <div className="mt-6 text-center text-sm text-muted-foreground">{footer}</div>
         </div>
       </div>
     </div>

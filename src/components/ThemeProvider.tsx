@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
-import { useThemeStore } from "@/store/themeStore";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 
+/**
+ * Class-based light/dark via next-themes. storageKey "theme-mode" keeps the
+ * value users already picked with the old theme store ("light" | "dark" | "system").
+ */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const init = useThemeStore((s) => s.init);
-
-  useEffect(() => {
-    init();
-  }, [init]);
-
-  return <>{children}</>;
+  return (
+    <NextThemesProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange storageKey="theme-mode">
+      {children}
+    </NextThemesProvider>
+  );
 }

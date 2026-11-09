@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { AuthGuard } from "@/components/AuthGuard";
-import { BottomNav } from "@/components/BottomNav";
+import { BottomNav, AppHeader } from "@/components/BottomNav";
 
 export default function DashboardLayout({
   children,
@@ -110,20 +110,19 @@ export default function DashboardLayout({
     <AuthGuard>
       <div
         id="app-viewport-container"
-        className="relative flex flex-col h-full w-full min-h-full overflow-hidden app-bg"
+        className="relative flex h-full min-h-full w-full flex-col overflow-hidden bg-background"
         style={{
           height: "100%",
           minHeight: "-webkit-fill-available",
         }}
       >
+        <AppHeader />
         <main
           ref={mainRef}
           id="main-scroll-container"
-          className="h-full w-full overflow-y-auto overscroll-y-contain"
+          className="min-h-0 w-full flex-1 overflow-y-auto overscroll-y-contain pb-[max(calc(env(safe-area-inset-bottom,0px)+72px),84px)] md:pb-12"
           style={{
             WebkitOverflowScrolling: "touch",
-            paddingTop: "max(env(safe-area-inset-top, 0px), 8px)",
-            paddingBottom: "max(calc(env(safe-area-inset-bottom, 0px) + 72px), 84px)",
           }}
         >
           {children}
