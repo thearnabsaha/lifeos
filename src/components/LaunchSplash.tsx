@@ -14,12 +14,9 @@ export function LaunchSplash() {
   const [gone, setGone] = useState(false);
 
   useEffect(() => {
-    if (document.documentElement.classList.contains("no-splash")) {
-      setGone(true);
-      return;
-    }
+    const skip = document.documentElement.classList.contains("no-splash");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const t = setTimeout(() => setGone(true), reduce ? 600 : 1150);
+    const t = setTimeout(() => setGone(true), skip ? 0 : reduce ? 600 : 1150);
     return () => clearTimeout(t);
   }, []);
 
