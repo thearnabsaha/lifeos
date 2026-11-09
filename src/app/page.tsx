@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { HourRing } from "@/components/HourRing";
 
 export default function Home() {
   const router = useRouter();
@@ -13,7 +14,7 @@ export default function Home() {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-background">
-      <div className="size-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+      <HourRing className="size-14 text-foreground" />
     </div>
   );
 }

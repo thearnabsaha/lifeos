@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
-import { LogoMark } from "@/components/Logo";
+import { HourRing } from "@/components/HourRing";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading, checkAuth } = useAuthStore();
@@ -21,9 +21,9 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen flex-col items-center justify-center gap-3 bg-background">
-        <LogoMark className="size-10 animate-pulse" />
-        <p className="mono-label">Printing your day…</p>
+      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background text-foreground">
+        <HourRing className="size-14 animate-pulse motion-reduce:animate-none" />
+        <p className="mono-label">Loading your day…</p>
       </div>
     );
   }

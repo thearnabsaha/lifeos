@@ -1,8 +1,8 @@
-const CACHE_NAME = "lifeos-v10";
+const CACHE_NAME = "lifeos-v11";
 const STATIC_ASSETS = [
   "/favicon.svg",
-  "/icons/icon-192.svg",
-  "/icons/icon-512.svg",
+  "/favicon-32.png",
+  "/icons/icon.svg",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/apple-touch-icon.png",
