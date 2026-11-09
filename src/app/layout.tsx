@@ -6,10 +6,12 @@ import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { Toaster } from "@/components/ui/sonner";
 import { LaunchSplash } from "@/components/LaunchSplash";
 import startupImages from "@/lib/startupImages.json";
+import { SITE_URL } from "@/lib/site";
 
 // Runs before first paint: skip the splash after the first launch in a session,
 // and tell the splash which hour is "now" so the ring fills up to it.
-const splashScript = `try{var d=document.documentElement;d.style.setProperty('--los-now',String(new Date().getHours()));if(sessionStorage.getItem('los-splash')){d.classList.add('no-splash')}else{sessionStorage.setItem('los-splash','1')}}catch(e){}`;
+// The public landing page at "/" skips it in a normal browser tab (it has its own hero).
+const splashScript = `try{var d=document.documentElement;d.style.setProperty('--los-now',String(new Date().getHours()));var sa=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;if(location.pathname==='/'&&!sa){d.classList.add('no-splash')}else if(sessionStorage.getItem('los-splash')){d.classList.add('no-splash')}else{sessionStorage.setItem('los-splash','1')}}catch(e){}`;
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -22,9 +24,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LifeOS — Your Personal Productivity System",
+  metadataBase: new URL(SITE_URL),
+  title: { default: "LifeOS: One line. Every hour.", template: "%s · LifeOS" },
   description:
-    "A minimal, mobile-first productivity app combining Time Tracking and Focus.",
+    "A free, ad-free personal time log: one line for every hour of your day, reminders, and an MCP server for your AI assistant.",
+  applicationName: "LifeOS",
   manifest: "/manifest.json",
   // favicon.ico, icon.svg and apple-icon.png live in src/app (file conventions).
   icons: {
