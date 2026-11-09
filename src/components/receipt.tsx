@@ -26,16 +26,16 @@ export function PageHeader({
   );
 }
 
-/** Thermal-receipt card with scalloped top/bottom edges. */
+/** Clean summary card: straight edges, rounded-xl, 1px border. */
 export function ReceiptCard({ className, children, print }: { className?: string; children: React.ReactNode; print?: boolean }) {
   return (
-    <div className={cn("receipt rounded-xl border px-5 py-6 drop-shadow-[0_6px_14px_rgba(0,0,0,0.06)] dark:drop-shadow-none", print && "lr-print", className)}>
+    <div className={cn("receipt rounded-xl border bg-card px-5 py-6 drop-shadow-[0_6px_14px_rgba(0,0,0,0.06)] dark:drop-shadow-none", print && "lr-print", className)}>
       {children}
     </div>
   );
 }
 
-/** Dashed tear line. `notches` adds side punch-holes (bleeds to card edge; pass -mx to match card padding). */
+/** Dashed divider line inside a card. */
 export function Tear({ className }: { className?: string }) {
   return <div aria-hidden className={cn("tear my-4", className)} />;
 }
@@ -123,8 +123,4 @@ export function Tag({ className, children }: { className?: string; children: Rea
       {children}
     </span>
   );
-}
-
-export function Barcode({ className }: { className?: string }) {
-  return <div aria-hidden className={cn("barcode", className)} />;
 }

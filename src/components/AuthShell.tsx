@@ -2,7 +2,7 @@
 
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { ReceiptCard, Barcode } from "@/components/receipt";
+import { ReceiptCard } from "@/components/receipt";
 
 export function AuthShell({
   label,
@@ -44,7 +44,6 @@ export function AuthShell({
               <span>Offline-first</span>
               <span>Free forever</span>
             </div>
-            <Barcode className="mt-4 h-6" />
           </ReceiptCard>
           <div className="mt-6 text-center text-sm text-muted-foreground">{footer}</div>
         </div>

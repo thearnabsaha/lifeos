@@ -1,4 +1,4 @@
-const CACHE_NAME = "lifeos-v9";
+const CACHE_NAME = "lifeos-v10";
 const STATIC_ASSETS = [
   "/favicon.svg",
   "/icons/icon-192.svg",

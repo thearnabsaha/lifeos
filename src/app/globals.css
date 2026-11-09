@@ -176,30 +176,15 @@
 }
 
 @layer components {
-  /* Thermal-receipt card: scalloped top + bottom edges */
+  /* Clean summary card: straight edges, rounded corners */
   .receipt {
     @apply relative bg-card text-card-foreground;
-    --notch: 6px;
-    -webkit-mask: radial-gradient(var(--notch) at 50% 0, #0000 98%, #000) 50% 0 / calc(var(--notch) * 3) 51% repeat-x,
-      radial-gradient(var(--notch) at 50% 100%, #0000 98%, #000) 50% 100% / calc(var(--notch) * 3) 51% repeat-x;
-    mask: radial-gradient(var(--notch) at 50% 0, #0000 98%, #000) 50% 0 / calc(var(--notch) * 3) 51% repeat-x,
-      radial-gradient(var(--notch) at 50% 100%, #0000 98%, #000) 50% 100% / calc(var(--notch) * 3) 51% repeat-x;
   }
   .mono-label {
     @apply font-mono text-[11px] uppercase tracking-widest text-muted-foreground;
   }
   .tear {
     @apply border-t border-dashed border-border;
-  }
-  /* CSS barcode for receipt footers */
-  .barcode {
-    height: 28px;
-    background-image: repeating-linear-gradient(90deg,
-      var(--foreground) 0 2px, transparent 2px 4px,
-      var(--foreground) 4px 5px, transparent 5px 8px,
-      var(--foreground) 8px 11px, transparent 11px 12px,
-      var(--foreground) 12px 13px, transparent 13px 16px);
-    opacity: 0.85;
   }
 }
 

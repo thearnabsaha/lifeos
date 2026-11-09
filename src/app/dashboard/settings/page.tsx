@@ -6,7 +6,7 @@ import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import { LogOut, Moon, Sun, Monitor, Download, Loader2, CheckCircle2 } from "lucide-react";
 import { McpSection } from "@/components/McpSection";
-import { PageHeader, ReceiptCard, ReceiptRow, SectionLabel, Chip, Tear, Barcode } from "@/components/receipt";
+import { PageHeader, ReceiptCard, ReceiptRow, SectionLabel, Chip, Tear } from "@/components/receipt";
 
 const MODE_OPTIONS = [
   { value: "light", label: "Light", icon: Sun },
@@ -129,7 +129,6 @@ export default function SettingsPage() {
               <span className="font-semibold">Total</span>
               <span className="font-mono font-semibold tabular-nums">Free forever</span>
             </div>
-            <Barcode className="mt-4" />
           </ReceiptCard>
         </section>
 

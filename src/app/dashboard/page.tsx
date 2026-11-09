@@ -5,7 +5,7 @@ import { useTimeArenaStore } from "@/store/timeArenaStore";
 import { useAuthStore } from "@/store/authStore";
 import { TimeSlotCard } from "@/components/TimeSlotCard";
 import { DatePicker } from "@/components/DatePicker";
-import { PageHeader, ReceiptCard, StatStrip, Tear, Barcode, SectionLabel } from "@/components/receipt";
+import { PageHeader, ReceiptCard, StatStrip, Tear, SectionLabel } from "@/components/receipt";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { cn, getCurrentHour, formatDate } from "@/lib/utils";
@@ -217,9 +217,6 @@ export default function DashboardPage() {
             />
             <Tear />
             <DatePicker selectedDate={selectedDate} onDateChange={setDate} />
-            <Tear className="mb-3" />
-            <Barcode />
-            <p className="mono-label mt-2 text-center">Thank you · Come again tomorrow</p>
           </ReceiptCard>
         </div>
 
