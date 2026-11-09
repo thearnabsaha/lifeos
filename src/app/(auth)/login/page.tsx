@@ -54,15 +54,18 @@ export default function LoginPage() {
           )}
 
           <div className="space-y-1.5">
-            <label className="mono-label">Email</label>
+            <label className="mono-label">Username or email</label>
             <Input
               className="h-11"
-              type="email"
-              placeholder="you@example.com"
+              type="text"
+              placeholder="username or you@example.com"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="email"
+              autoComplete="username"
             />
           </div>
 

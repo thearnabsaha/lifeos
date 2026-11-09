@@ -5,11 +5,14 @@ import { signToken } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    const body = await req.json();
+    // Accept a plain username or an email, sent as `email` or `username`.
+    const email = body?.email ?? body?.username;
+    const password = body?.password;
 
-    if (!email || !password) {
+    if (typeof email !== "string" || typeof password !== "string" || !email.trim() || !password) {
       return NextResponse.json(
-        { error: "Email and password are required" },
+        { error: "Username and password are required" },
         { status: 400 }
       );
     }

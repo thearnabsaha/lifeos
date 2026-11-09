@@ -5,11 +5,14 @@ import { signToken } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, name } = await req.json();
+    const body = await req.json();
+    // The identifier can be a plain username or an email.
+    const email = body?.email ?? body?.username;
+    const { password, name } = body ?? {};
 
-    if (!email || !password) {
+    if (typeof email !== "string" || typeof password !== "string" || !email.trim() || !password) {
       return NextResponse.json(
-        { error: "Email and password are required" },
+        { error: "Username and password are required" },
         { status: 400 }
       );
     }
@@ -22,12 +25,18 @@ export async function POST(req: NextRequest) {
     }
 
     const normalizedEmail = email.toLowerCase().trim();
+    if (/\s/.test(normalizedEmail) || normalizedEmail.length < 3) {
+      return NextResponse.json(
+        { error: "Username must be at least 3 characters with no spaces" },
+        { status: 400 }
+      );
+    }
     const db = await getDb();
 
     const existing = await db.collection("users").findOne({ email: normalizedEmail });
     if (existing) {
       return NextResponse.json(
-        { error: "Email already registered" },
+        { error: "Username or email already registered" },
         { status: 409 }
       );
     }
