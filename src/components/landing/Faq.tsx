@@ -17,7 +17,7 @@ export const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "How does the AI connection work?",
-    a: "LifeOS runs an MCP server. Create a personal key in Settings, add the endpoint to an MCP-capable assistant such as Grok Bot, and it can read and log your hours and manage your reminders. Keys are shown once and can be revoked at any time.",
+    a: "LifeOS runs an MCP server. Create a personal key in Settings, add the endpoint to an MCP-capable assistant such as Grok Bot, and it can read and log your hours. Keys are shown once and can be revoked at any time.",
   },
   {
     q: "Do I need the App Store?",

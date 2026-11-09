@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Clock, Bell, Settings } from "lucide-react";
+import { Clock, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Today", icon: Clock },
-  { href: "/dashboard/reminders", label: "Reminders", icon: Bell },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ] as const;
 
@@ -67,7 +66,7 @@ export function BottomNav() {
         paddingBottom: "max(env(safe-area-inset-bottom, 0px), 12px)",
       }}
     >
-      <div className="mx-auto grid h-14 max-w-md grid-cols-3">
+      <div className="mx-auto grid h-14 max-w-md grid-cols-2">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
           return (

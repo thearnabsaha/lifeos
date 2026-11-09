@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: "LifeOS: One line. Every hour.", template: "%s · LifeOS" },
   description:
-    "A free, ad-free personal time log: one line for every hour of your day, reminders, and an MCP server for your AI assistant.",
+    "A free, ad-free personal time log: one line for every hour of your day, and an MCP server for your AI assistant.",
   applicationName: "LifeOS",
   manifest: "/manifest.json",
   // favicon.ico, icon.svg and apple-icon.png live in src/app (file conventions).

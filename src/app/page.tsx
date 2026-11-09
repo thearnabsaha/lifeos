@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
-  Bell,
   Bot,
   Clock,
   Download,
   Flame,
   MoonStar,
-  Paperclip,
   Plus,
   Share,
   Smartphone,
@@ -22,12 +20,12 @@ import { PhoneMockup } from "@/components/landing/PhoneMockup";
 import { Faq, FAQS } from "@/components/landing/Faq";
 import { Logo } from "@/components/Logo";
 import { HourRing } from "@/components/HourRing";
-import { ReceiptRow, Tag } from "@/components/receipt";
+import { ReceiptRow } from "@/components/receipt";
 import { SITE_URL } from "@/lib/site";
 
 const TITLE = "LifeOS: One line. Every hour.";
 const DESCRIPTION =
-  "LifeOS is a free, ad-free personal time log. Write one line for every hour of your day, see it add up on a daily receipt, keep reminders, and let AI assistants read and log your day over MCP. Installs on iPhone, works offline.";
+  "LifeOS is a free, ad-free personal time log. Write one line for every hour of your day, see it add up on a daily receipt, and let AI assistants read and log your day over MCP. Installs on iPhone, works offline.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
@@ -48,11 +46,6 @@ const MCP_TOOLS = [
   "get_day",
   "set_slots",
   "get_daily_summary",
-  "list_reminders",
-  "create_reminder",
-  "update_reminder",
-  "complete_reminder",
-  "delete_reminder",
 ];
 
 function SectionHead({ label, title, sub, center }: { label: string; title: React.ReactNode; sub?: React.ReactNode; center?: boolean }) {
@@ -136,7 +129,7 @@ export default function Home() {
             {[
               { l: "Slots a day", v: "24", s: "" },
               { l: "Lines per hour", v: "1", s: "" },
-              { l: "MCP tools", v: "8", s: "" },
+              { l: "MCP tools", v: "3", s: "" },
               { l: "Price", v: "$0", s: "/forever" },
             ].map((x, i) => (
               <div key={x.l} className={`px-5 py-6 sm:px-7 ${i % 2 === 1 ? "border-l" : ""} ${i >= 2 ? "border-t sm:border-t-0" : ""} ${i === 2 ? "sm:border-l" : ""}`}>
@@ -192,7 +185,7 @@ export default function Home() {
               <SectionHead
                 label="Features · 06"
                 title="Small on purpose. Everything you need."
-                sub="No feeds, no gamified fluff. A log, a receipt, reminders, and a door for your AI."
+                sub="No feeds, no gamified fluff. A log, a receipt, offline sync, and a door for your AI."
               />
             </div>
             <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -209,16 +202,18 @@ export default function Home() {
                   <p className="pb-1 font-mono text-xs text-success">STREAK 8H</p>
                 </div>
               </Feature>
-              <Feature icon={Bell} label="Reminders" title="Priorities and due dates" body="Quick reminders with high, medium or low priority and due-date chips. Overdue ones call themselves out.">
-                <div className="flex flex-wrap gap-1.5">
-                  <Tag><span className="size-1.5 rounded-full bg-destructive" /> High</Tag>
-                  <Tag>Today · Nov 9</Tag>
-                  <Tag className="border-destructive/40 text-destructive">Overdue · Nov 7</Tag>
-                </div>
-              </Feature>
-              <Feature icon={Paperclip} label="Attachments" title="Files on reminders" body="Attach photos, voice notes or documents to any reminder, so the context lives with the task." />
               <Feature icon={Download} label="CSV export" title="Your data, one tap away" body="Export your full Time Arena history as a CSV that opens in Excel, Numbers or Google Sheets." />
               <Feature icon={MoonStar} label="Light + dark" title="Easy on the eyes" body="Warm paper by day, true black by night. Follows your system, or pick one yourself." />
+              <Feature icon={WifiOff} label="Offline PWA" title="Works with no signal" body="Cached on your phone. Unsynced edits wait locally and push up the moment you're back online.">
+                <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Home Screen · Instant open</p>
+              </Feature>
+              <Feature icon={Bot} label="MCP / AI" title="Your AI keeps the log" body="Three tools over Streamable HTTP. Give Grok Bot, Cursor or Claude a personal key and they can read and fill your day.">
+                <div className="flex flex-wrap gap-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <span className="rounded-full border px-2 py-0.5">get_day</span>
+                  <span className="rounded-full border px-2 py-0.5">set_slots</span>
+                  <span className="rounded-full border px-2 py-0.5">get_daily_summary</span>
+                </div>
+              </Feature>
             </div>
           </div>
         </section>
@@ -262,7 +257,7 @@ export default function Home() {
                   Let your AI keep the log.
                 </h2>
                 <p className="mt-4 max-w-md text-base leading-relaxed text-neutral-400">
-                  LifeOS ships its own MCP server. Give an assistant like Grok Bot your personal key and it can read your day, fill in hours and manage reminders for you.
+                  LifeOS ships its own MCP server. Give an assistant like Grok Bot your personal key and it can read your day and fill in hours for you.
                 </p>
                 <div className="mt-7 flex flex-wrap gap-1.5">
                   {MCP_TOOLS.map((t) => (
@@ -314,9 +309,9 @@ export default function Home() {
                 </pre>
                 <div className="border-t border-dashed border-white/10 px-5 py-4 font-mono text-[12px] leading-relaxed">
                   <p className="text-neutral-500">
-                    <span className="text-neutral-600">&gt;</span> “Log 14:00 as <span className="text-neutral-300">design review</span> and remind me to send the deck tomorrow.”
+                    <span className="text-neutral-600">&gt;</span> “Log 14:00 as <span className="text-neutral-300">design review</span> and summarise my day so far.”
                   </p>
-                  <p className="mt-1.5 text-[#00d294]">✓ set_slots · create_reminder</p>
+                  <p className="mt-1.5 text-[#00d294]">✓ set_slots · get_daily_summary</p>
                 </div>
               </div>
             </div>
@@ -397,7 +392,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.5fr_1fr_1fr]">
           <div className="col-span-2 md:col-span-1">
             <Logo />
-            <p className="mt-3 max-w-xs text-sm text-muted-foreground">One line. Every hour. A personal time log with reminders and an MCP server.</p>
+            <p className="mt-3 max-w-xs text-sm text-muted-foreground">One line. Every hour. A personal time log with an MCP server.</p>
           </div>
           <div>
             <p className="mono-label">Product</p>

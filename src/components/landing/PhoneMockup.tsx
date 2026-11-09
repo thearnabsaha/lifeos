@@ -1,4 +1,4 @@
-import { Clock, Bell, Settings } from "lucide-react";
+import { Clock, Settings } from "lucide-react";
 import { LogoMark } from "@/components/Logo";
 import { cn } from "@/lib/utils";
 
@@ -130,10 +130,9 @@ export function PhoneMockup({ className }: { className?: string }) {
 
           {/* bottom nav */}
           <div className="absolute inset-x-0 bottom-0 border-t bg-background pb-4">
-            <div className="grid h-12 grid-cols-3">
+            <div className="grid h-12 grid-cols-2">
               {[
                 [Clock, "Today", true],
-                [Bell, "Reminders", false],
                 [Settings, "Settings", false],
               ].map(([Icon, label, active]) => {
                 const I = Icon as typeof Clock;

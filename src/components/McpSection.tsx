@@ -70,7 +70,7 @@ export function McpSection() {
         </div>
         <div className="min-w-0">
           <p className="text-sm font-medium">Connect an AI assistant</p>
-          <p className="text-xs text-muted-foreground">Grok Bot, Cursor or Claude can read and update your Time Arena and reminders.</p>
+          <p className="text-xs text-muted-foreground">Grok Bot, Cursor or Claude can read and update your Time Arena.</p>
         </div>
       </div>
 

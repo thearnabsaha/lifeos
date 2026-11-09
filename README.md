@@ -91,9 +91,8 @@ Endpoint: `https://<your-domain>/api/mcp` (Streamable HTTP), auth with `Authoriz
 
 Tools:
 - Time Arena: `get_day` (date?, onlyFilled?), `set_slots` (date?, slots[{hour, content}])
-- Reminders: `list_reminders`, `create_reminder`, `update_reminder`, `complete_reminder`, `delete_reminder`
-- Summary: `get_daily_summary` (slots + due/overdue reminders)
+- Summary: `get_daily_summary` (logged slots for a day)
 
 Dates are `YYYY-MM-DD` (default: today in `LIFEOS_TZ`, optional env, default `Asia/Kolkata`). No other new env vars beyond the app's existing `MONGODB_URI` (and `JWT_SECRET` for the app login). Runs fine on Vercel Hobby.
 
-Smoke test: `MCP_URL=https://<domain>/api/mcp MCP_KEY=los_... node scripts/mcp-smoke.mjs [full]` (`full` writes a slot at 09:00 today and a temporary reminder, then deletes the reminder).
+Smoke test: `MCP_URL=https://<domain>/api/mcp MCP_KEY=los_... node scripts/mcp-smoke.mjs [full]` (`full` writes a slot at 09:00 today, then reads the day and daily summary).

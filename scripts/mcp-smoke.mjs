@@ -19,10 +19,6 @@ if (process.argv[2] === "full") {
   const today = new Date().toISOString().slice(0, 10);
   await call("set_slots", { date: today, slots: [{ hour: 9, content: "MCP smoke: deep work" }] });
   await call("get_day", { date: today, onlyFilled: true });
-  const r = await call("create_reminder", { title: "MCP smoke reminder", priority: "low" });
-  const id = JSON.parse(r.body.result.content[0].text).id;
-  await call("complete_reminder", { id });
-  await call("delete_reminder", { id });
   await call("get_daily_summary", { date: today });
 }
 const bad = await fetch(url, { method: "POST", headers: { "content-type": "application/json", accept: "application/json, text/event-stream", authorization: "Bearer nope" }, body: "{}" });

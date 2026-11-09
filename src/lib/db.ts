@@ -110,20 +110,10 @@ export async function ensureIndexes() {
     .collection("todos")
     .createIndex({ user_id: 1, completed: 1, schedule: 1, due_date: 1 });
 
-  // reminders
-  await db
-    .collection("reminders")
-    .createIndex({ user_id: 1, completed: 1, due_date: 1 });
-
   // notes
   await db
     .collection("notes")
     .createIndex({ user_id: 1, updated_at: -1 });
-
-  // attachments
-  await db
-    .collection("attachments")
-    .createIndex({ user_id: 1, parent_type: 1, parent_id: 1 });
 }
 
 // Backward compatibility alias for setup route

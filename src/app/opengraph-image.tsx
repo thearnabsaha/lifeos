@@ -42,7 +42,7 @@ export default function OpengraphImage() {
             <div style={{ fontSize: 96, fontWeight: 700, letterSpacing: -4, lineHeight: 1 }}>One line.</div>
             <div style={{ fontSize: 96, fontWeight: 700, letterSpacing: -4, lineHeight: 1.05, color: "#5a5a5a" }}>Every hour.</div>
             <div style={{ marginTop: 28, fontSize: 28, color: "#a1a1a1", maxWidth: 560 }}>
-              A 24-slot log for your day, with reminders and an MCP server for your AI.
+              A 24-slot log for your day, with an MCP server for your AI.
             </div>
           </div>
           <div style={{ display: "flex", gap: 28, fontSize: 18, letterSpacing: 4, color: "#a1a1a1", textTransform: "uppercase" }}>
