@@ -63,10 +63,12 @@ export function BottomNav() {
       id="bottom-nav-bar"
       className="fixed bottom-0 left-0 right-0 z-50 w-full border-t bg-background select-none after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:h-[50vh] after:bg-background after:content-[''] md:hidden"
       style={{
-        paddingBottom: "max(env(safe-area-inset-bottom, 0px), 12px)",
+        paddingBottom: "var(--nav-safe-b)",
+        paddingLeft: "env(safe-area-inset-left, 0px)",
+        paddingRight: "env(safe-area-inset-right, 0px)",
       }}
     >
-      <div className="mx-auto grid h-14 max-w-md grid-cols-2">
+      <div className="mx-auto grid h-[50px] max-w-xs grid-cols-2">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
           return (
@@ -75,14 +77,14 @@ export function BottomNav() {
               href={href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "relative flex touch-manipulation flex-col items-center justify-center gap-1 text-muted-foreground transition-colors duration-75 active:bg-muted/60",
+                "relative flex touch-manipulation flex-col items-center justify-center gap-0.5 text-muted-foreground transition-colors duration-75 active:bg-muted/60",
                 active && "text-foreground"
               )}
             >
               <span
                 aria-hidden
                 className={cn(
-                  "absolute inset-x-8 top-0 h-0.5 rounded-full bg-foreground transition-opacity",
+                  "absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-full bg-foreground transition-opacity",
                   active ? "opacity-100" : "opacity-0"
                 )}
               />

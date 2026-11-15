@@ -120,7 +120,7 @@ export default function DashboardLayout({
         <main
           ref={mainRef}
           id="main-scroll-container"
-          className="min-h-0 w-full flex-1 overflow-y-auto overscroll-y-contain pb-[max(calc(env(safe-area-inset-bottom,0px)+72px),84px)] md:pb-12"
+          className="min-h-0 w-full flex-1 overflow-y-auto overscroll-y-contain"
           style={{
             WebkitOverflowScrolling: "touch",
           }}

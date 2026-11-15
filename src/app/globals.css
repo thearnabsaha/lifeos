@@ -168,6 +168,22 @@
   }
 }
 
+/* Bottom tab bar: 50px row + a trimmed safe-area pad. The full 34px iPhone
+   home-indicator inset doubled the bar to ~91px in the installed app; tuck the
+   labels closer to the indicator (like iOS tab bars) but never below 6px. */
+:root {
+  --nav-safe-b: max(calc(env(safe-area-inset-bottom, 0px) - 12px), 6px);
+  --bottom-nav-h: calc(50px + var(--nav-safe-b));
+}
+#main-scroll-container {
+  padding-bottom: calc(var(--bottom-nav-h) + 16px);
+}
+@media (min-width: 768px) {
+  #main-scroll-container {
+    padding-bottom: 3rem;
+  }
+}
+
 #app-viewport-container {
   height: 100%;
   min-height: 100%;
